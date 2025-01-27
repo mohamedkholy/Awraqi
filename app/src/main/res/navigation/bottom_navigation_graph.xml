@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bottom_navigation_graph"
+    app:startDestination="@id/storeItemsFragment"
+    >
+    <fragment
+        android:id="@+id/storeItemsFragment"
+        android:name="com.example.waraq.ui.StoreItemsFragment"
+        android:label="fragment_store_books"
+        tools:layout="@layout/fragment_store_items" />
+    <fragment
+        android:id="@+id/myItemsFragment"
+        android:name="com.example.waraq.ui.DownloadedItemsFragment"
+        android:label="fragment_my_books"
+        tools:layout="@layout/fragment_downloaded_items" />
+
+</navigation>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/splashFragment">
+
+
+    <include app:graph="@navigation/user_graph" />
+
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="com.example.waraq.ui.SplashFragment"
+        android:label="FragmentSplash"
+        tools:layout="@layout/fragment_splash" >
+        <action
+            android:id="@+id/action_splashFragment_to_loginSignupFragment"
+            app:destination="@id/loginSignupFragment" />
+        <action
+            android:id="@+id/action_splashFragment_to_adminHomeFragment"
+            app:destination="@id/adminHomeFragment" />
+        <action
+            android:id="@+id/action_splashFragment_to_user_graph"
+            app:destination="@id/user_graph" />
+    </fragment>
+    <fragment
+        android:id="@+id/loginSignupFragment"
+        android:name="com.example.waraq.ui.LoginSignupFragment"
+        android:label="LoginSignupFragment" >
+        <action
+            android:id="@+id/action_loginSignupFragment_to_adminHomeFragment"
+            app:destination="@id/adminHomeFragment" />
+        <action
+            android:id="@+id/action_loginSignupFragment_to_userHomeFragment"
+            app:destination="@id/nav_graph" />
+    </fragment>
+    <fragment
+        android:id="@+id/adminHomeFragment"
+        android:name="com.example.waraq.ui.AdminHomeFragment"
+        android:label="AdminHomeFragment" />
+
+
+
+
+
+</navigation>

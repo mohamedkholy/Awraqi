@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "542489452607",
+    "project_id": "waraq-46569",
+    "storage_bucket": "waraq-46569.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:542489452607:android:4308f685cf1a2e38dfd88a",
+        "android_client_info": {
+          "package_name": "com.example.waraq"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCYFXTgQbcmHTqFaXSldGVgBfArIN00TlU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

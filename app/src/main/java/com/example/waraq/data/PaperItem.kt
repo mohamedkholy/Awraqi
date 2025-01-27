@@ -1,0 +1,27 @@
+package com.example.waraq.data
+
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import java.io.Serializable
+
+@Entity
+class PaperItem(
+    @PrimaryKey
+    val id: String,
+    val title: String? = null,
+    val url: String? = null,
+    val coverUrl: String? = null,
+    var downloadState: Downloaded? = Downloaded.notDownloded,
+    val university:String? = null,
+    val faculty:String? = null,
+    val grade:String? = null,
+    val semester:String? = null,
+    val subject:String? = null,
+    val author:String? = null,
+    val pages:String? = null,
+    val previewLink:String? = null,
+    val isPurchased:Purchased = Purchased.AVAILABLE
+
+    ):Serializable{
+    constructor():this(id="",isPurchased=Purchased.AVAILABLE)
+}

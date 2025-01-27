@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/user_graph"
+    app:startDestination="@id/userHomeFragment"
+    >
+
+    <fragment
+        android:id="@+id/userHomeFragment"
+        android:name="com.example.waraq.ui.UserHomeFragment"
+        android:label="UserHomeFragment">
+        <action
+            android:id="@+id/action_userHomeFragment_to_storeItemsDetailsFragment"
+            app:destination="@id/storeItemsDetailsFragment" />
+        <action
+            android:id="@+id/action_userHomeFragment_to_pdfFragment"
+            app:destination="@id/pdfFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/pdfFragment"
+        android:name="com.example.waraq.ui.PdfFragment"
+        android:label="PdfFragment" >
+        <argument
+            android:name="file_title"
+            app:argType="string" />
+        <argument
+            android:name="item_id"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/storeItemsDetailsFragment"
+        android:name="com.example.waraq.ui.ItemPreviewFragment"
+        android:label="StoreItemsDetailsFragment" >
+        <argument
+            android:name="item"
+            app:argType="com.example.waraq.data.PaperItem" />
+        <action
+            android:id="@+id/action_storeItemsDetailsFragment_to_pdfFragment"
+            app:destination="@id/pdfFragment" />
+    </fragment>
+
+</navigation>
