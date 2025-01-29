@@ -8,8 +8,8 @@
          />
 
     <item
-        android:id="@+id/myItemsFragment"
-        android:title="My Items"
+        android:id="@+id/DownloadedFragment"
+        android:title="Downloads"
         android:icon="@drawable/baseline_boy"
       />
 

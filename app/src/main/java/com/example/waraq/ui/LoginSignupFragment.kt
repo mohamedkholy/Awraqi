@@ -3,10 +3,10 @@ package com.example.waraq.ui
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Patterns
+import androidx.activity.addCallback
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import com.example.waraq.R
 import com.example.waraq.databinding.FragmentLoginSignupBinding
@@ -25,15 +25,30 @@ class LoginSignupFragment :
 
     private val firebaseAuth = FirebaseAuth.getInstance()
     private val firestore = Firebase.firestore
-    private lateinit var sp:SharedPreferences
+    private lateinit var sp: SharedPreferences
 
     override fun setup() {
-        sp=requireContext().getSharedPreferences(Constants.DEFAULT_SHARED_PREFERENCES, Context.MODE_PRIVATE)
-        binding.isLogging=false
-        binding.isSigning=false
+        sp = requireContext().getSharedPreferences(
+            Constants.DEFAULT_SHARED_PREFERENCES,
+            Context.MODE_PRIVATE
+        )
+        binding.isLogging = false
+        binding.isSigning = false
     }
 
     override fun addCallbacks() {
+
+        binding.backButton.setOnClickListener {
+            if ( !binding.isSigning!! && !binding.isLogging!!) {
+                findNavController().popBackStack()
+            }
+        }
+
+        requireActivity().onBackPressedDispatcher.addCallback(this){
+            if ( !binding.isSigning!! && !binding.isLogging!!) {
+                findNavController().popBackStack()
+            }
+        }
 
         binding.apply {
 
@@ -46,7 +61,7 @@ class LoginSignupFragment :
             }
 
             userTypeSelectorRadioGroup.setOnCheckedChangeListener { _, selectedItem ->
-                if (selectedItem == studentRadio.id) {
+                if (selectedItem == userRadio.id) {
                     signupButton.isEnabled = true
                     signupButton.backgroundTintList =
                         ContextCompat.getColorStateList(requireContext(), R.color.primary_color)
@@ -74,12 +89,12 @@ class LoginSignupFragment :
         val email = binding.emailEt.text.toString()
 
         if (validateEmailAndPassword(email, password)) {
-            binding.isSigning=true
+            binding.isSigning = true
             firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnSuccessListener {
                     onSignupSuccess(userId = it.user!!.uid, email = email)
                 }.addOnFailureListener {
-                    binding.isSigning=false
+                    binding.isSigning = false
                     Snackbar.make(binding.root, "Signup failed", Snackbar.LENGTH_LONG).show()
                 }
 
@@ -87,37 +102,36 @@ class LoginSignupFragment :
 
     }
 
-
     private fun login() {
         val password = binding.passwordEt.text.toString()
         val email = binding.emailEt.text.toString()
         if (validateEmailAndPassword(email, password)) {
-            binding.isLogging=true
+            binding.isLogging = true
             firebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnSuccessListener {
                     lifecycleScope.launch {
-                        onLoginSuccess(userId = it.user!!.uid)
+                        onLoginSuccess(userId = it.user!!.uid,email)
                     }
                 }.addOnFailureListener {
-                    binding.isLogging=false
+                    binding.isLogging = false
                     Snackbar.make(binding.root, "Login failed", Snackbar.LENGTH_LONG).show()
                 }
         }
 
     }
 
-    private suspend fun onLoginSuccess(userId: String) {
+    private suspend fun onLoginSuccess(userId: String, email: String) {
         val student =
             firestore.collection(Constants.FIRE_STORE_STUDENT_COLLECTION).document(userId).get()
                 .await()
         if (student.exists()) {
-            setUserTypeAndNavigateScreen(Constants.STUDENT_USER_TYPE,LoginSignupFragmentDirections.actionLoginSignupFragmentToUserHomeFragment())
+            setUserTypeAndNavigateScreen(Constants.USER_TYPE, email)
         } else {
             val admin =
                 firestore.collection(Constants.FIRE_STORE_ADMIN_COLLECTION).document(userId).get()
                     .await()
             if (admin.exists()) {
-                setUserTypeAndNavigateScreen(Constants.ADMIN_USER_TYPE,LoginSignupFragmentDirections.actionLoginSignupFragmentToAdminHomeFragment())
+                setUserTypeAndNavigateScreen(Constants.ADMIN_USER_TYPE, email)
             }
         }
 
@@ -142,15 +156,15 @@ class LoginSignupFragment :
         val map = mapOf("email" to email)
         firestore.collection(Constants.FIRE_STORE_STUDENT_COLLECTION)
             .document(userId).set(map).addOnSuccessListener {
-                setUserTypeAndNavigateScreen(Constants.STUDENT_USER_TYPE,LoginSignupFragmentDirections.actionLoginSignupFragmentToUserHomeFragment())
+                setUserTypeAndNavigateScreen(Constants.USER_TYPE,email)
             }.addOnFailureListener {
-                binding.isSigning=false
+                binding.isSigning = false
             }
 
     }
 
 
-    fun isValidPassword(password: String): Boolean {
+    private fun isValidPassword(password: String): Boolean {
         val PASSWORD_PATTERN = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,20}$"
 
         val pattern = Pattern.compile(PASSWORD_PATTERN)
@@ -159,11 +173,12 @@ class LoginSignupFragment :
         return matcher.matches()
     }
 
-    private fun setUserTypeAndNavigateScreen(userType:String,action: NavDirections) {
-        sp.edit().putString(Constants.USER_TYPE,userType).apply()
-        binding.isLogging=false
-        binding.isSigning=false
-        findNavController().navigate(action)
+    private fun setUserTypeAndNavigateScreen(userType: String, email: String) {
+        sp.edit().putString(Constants.USER_TYPE, userType).apply()
+        sp.edit().putString(Constants.EMAIL_KEY, email).apply()
+        binding.isLogging = false
+        binding.isSigning = false
+        findNavController().popBackStack()
     }
 
 }

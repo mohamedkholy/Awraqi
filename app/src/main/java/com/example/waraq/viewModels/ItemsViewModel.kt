@@ -15,10 +15,8 @@ class ItemsViewModel: ViewModel() {
     private val _storeItemsLiveData = MutableLiveData<List<PaperItem>>()
     var storeItemsLiveData: LiveData<List<PaperItem>> = _storeItemsLiveData
     var downloadedItemsLiveData:LiveData<List<PaperItem>> = MutableLiveData()
-    var itemsFilter = MutableLiveData(ItemsFilter.PURCHASED)
-
-
-
+    val itemsFilter = MutableLiveData(ItemsFilter.PURCHASED)
+    val searchText = MutableLiveData<String>()
 
 
     private fun getAllStoreBooks(){
@@ -30,6 +28,8 @@ class ItemsViewModel: ViewModel() {
     private fun getDownLoadedItems(){
         downloadedItemsLiveData = repository.getAllDownloadedItems()
     }
+
+
 
     init {
         getAllStoreBooks()

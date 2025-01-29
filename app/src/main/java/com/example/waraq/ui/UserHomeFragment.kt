@@ -1,9 +1,11 @@
 package com.example.waraq.ui
 
+
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
@@ -17,6 +19,7 @@ import com.example.waraq.viewModels.ItemsViewModel
 class UserHomeFragment : BaseFragment<FragmentUserHomeBinding>(R.layout.fragment_user_home) {
 
     private val viewModel by activityViewModels<ItemsViewModel>()
+    private lateinit var searchView: SearchView
 
     override fun setup() {
         setSpinnerAdapter()
@@ -24,7 +27,7 @@ class UserHomeFragment : BaseFragment<FragmentUserHomeBinding>(R.layout.fragment
             (childFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).findNavController()
         binding.bottomNavigation.setupWithNavController(navController)
         binding.toolbar.inflateMenu(R.menu.user_home_menu)
-
+        searchView = binding.toolbar.menu.findItem(R.id.action_search).actionView as SearchView
     }
 
     private fun setSpinnerAdapter() {
@@ -35,25 +38,45 @@ class UserHomeFragment : BaseFragment<FragmentUserHomeBinding>(R.layout.fragment
     }
 
     override fun addCallbacks() {
-        binding.spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
-                view?.apply { viewModel.itemsFilter.postValue(
-                    ItemsFilter.valueOf((this as TextView).text.toString().uppercase())
-                ) }
+        binding.spinner.apply {
+            post {
+                onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                    override fun onItemSelected(
+                        parent: AdapterView<*>,
+                        view: View?,
+                        position: Int,
+                        id: Long
+                    ) {
+                        view?.apply {
+                            viewModel.itemsFilter.postValue(
+                                ItemsFilter.valueOf((this as TextView).text.toString().uppercase())
+                            )
+                        }
+                    }
+
+                    override fun onNothingSelected(parent: AdapterView<*>?) {}
+                }
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
-        binding.toolbar.setOnMenuItemClickListener {
-            false
+
+        binding.toolbar.setOnMenuItemClickListener { menuItem ->
+            if (menuItem.itemId == R.id.settings) {
+                findNavController().navigate(R.id.settingFragment)
+            }
+            true
         }
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(p0: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(p0: String?): Boolean {
+                viewModel.searchText.postValue(p0)
+                return true
+            }
+        })
     }
-
-
 
 }

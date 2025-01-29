@@ -12,10 +12,21 @@
         android:label="UserHomeFragment">
         <action
             android:id="@+id/action_userHomeFragment_to_storeItemsDetailsFragment"
-            app:destination="@id/storeItemsDetailsFragment" />
+            app:destination="@id/storeItemsDetailsFragment"
+            app:enterAnim="@anim/slide_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_out" />
         <action
             android:id="@+id/action_userHomeFragment_to_pdfFragment"
-            app:destination="@id/pdfFragment" />
+            app:destination="@id/pdfFragment"
+            app:enterAnim="@anim/slide_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_out" />
+        <action
+            android:id="@+id/action_userHomeFragment_to_settingFragment"
+            app:destination="@id/settingFragment" />
     </fragment>
 
     <fragment
@@ -40,6 +51,36 @@
         <action
             android:id="@+id/action_storeItemsDetailsFragment_to_pdfFragment"
             app:destination="@id/pdfFragment" />
+        <action
+            android:id="@+id/action_storeItemsDetailsFragment_to_loginSignupFragment"
+            app:destination="@id/loginSignupFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="com.example.waraq.ui.SplashFragment"
+        android:label="SplashFragment" >
+        <action
+            android:id="@+id/action_splashFragment_to_userHomeFragment"
+            app:destination="@id/userHomeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/loginSignupFragment"
+        android:name="com.example.waraq.ui.LoginSignupFragment"
+        android:label="LoginSignupFragment" />
+    <fragment
+        android:id="@+id/settingFragment"
+        android:name="com.example.waraq.ui.SettingFragment"
+        android:label="SettingFragment" >
+        <action
+            android:id="@+id/action_settingFragment_to_loginSignupFragment"
+            app:destination="@id/loginSignupFragment" />
+        <action
+            android:id="@+id/action_settingFragment_to_preferencesFragment"
+            app:destination="@id/preferencesFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/preferencesFragment"
+        android:name="com.example.waraq.ui.PreferencesFragment"
+        android:label="PreferencesFragment" />
 
 </navigation>

@@ -65,24 +65,6 @@ class PdfFragment : BaseFragment<FragmentPdfBinding>(R.layout.fragment_pdf) {
         isAntiAlias = true
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        requireActivity().onBackPressedDispatcher.addCallback(this) {
-            if (binding.drawButton.isChecked)
-                binding.drawButton.isChecked = false
-            else if (binding.noteButton.isChecked)
-                binding.noteButton.isChecked = false
-            else if (binding.clearDrawButton.isChecked)
-                binding.clearDrawButton.isChecked = false
-            else if (binding.highlightButton.isChecked)
-                binding.highlightButton.isChecked = false
-            else
-                findNavController().popBackStack()
-        }
-
-
-    }
 
     override fun setup() {
         itemId = args.itemId
@@ -100,6 +82,19 @@ class PdfFragment : BaseFragment<FragmentPdfBinding>(R.layout.fragment_pdf) {
 
     @SuppressLint("ClickableViewAccessibility")
     override fun addCallbacks() {
+
+        requireActivity().onBackPressedDispatcher.addCallback(this) {
+            if (binding.drawButton.isChecked)
+                binding.drawButton.isChecked = false
+            else if (binding.noteButton.isChecked)
+                binding.noteButton.isChecked = false
+            else if (binding.clearDrawButton.isChecked)
+                binding.clearDrawButton.isChecked = false
+            else if (binding.highlightButton.isChecked)
+                binding.highlightButton.isChecked = false
+            else
+                findNavController().popBackStack()
+        }
 
         viewModel.getAllNotes(itemId).observe(viewLifecycleOwner) {
             it?.apply { notesMap = notes }
@@ -322,8 +317,8 @@ class PdfFragment : BaseFragment<FragmentPdfBinding>(R.layout.fragment_pdf) {
             }
             .onPageChange { currentPage: Int, pagesCount: Int ->
                 this@PdfFragment.currentPage = currentPage
-                binding.page.text = "Page ${currentPage + 1}"
-                binding.clearPageTv.text = "Clear page ${currentPage + 1}"
+                binding.page.text = getString(R.string.page, "${currentPage + 1}")
+                binding.clearPageTv.text = getString(R.string.clear_page, "${currentPage + 1}")
                 binding.pageNumber.text = "${currentPage + 1}"
                 notesMap[currentPage].let { note ->
                     binding.noteEt.setText(note)

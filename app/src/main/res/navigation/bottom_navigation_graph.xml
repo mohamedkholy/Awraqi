@@ -11,7 +11,7 @@
         android:label="fragment_store_books"
         tools:layout="@layout/fragment_store_items" />
     <fragment
-        android:id="@+id/myItemsFragment"
+        android:id="@+id/DownloadedFragment"
         android:name="com.example.waraq.ui.DownloadedItemsFragment"
         android:label="fragment_my_books"
         tools:layout="@layout/fragment_downloaded_items" />

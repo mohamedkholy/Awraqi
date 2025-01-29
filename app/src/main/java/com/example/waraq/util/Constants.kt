@@ -3,6 +3,7 @@ package com.example.waraq.util
 object Constants {
     const val DEFAULT_SHARED_PREFERENCES = "DEFAULT_SHARED_PREFERENCES"
     const val USER_TYPE = "USER_TYPE"
+    const val EMAIL_KEY = "EMAIL_KEY"
     const val ADMIN_USER_TYPE = "ADMIN_USER_TYPE"
     const val STUDENT_USER_TYPE = "STUDENT_USER_TYPE"
     const val FIRE_STORE_STUDENT_COLLECTION = "STUDENTS"

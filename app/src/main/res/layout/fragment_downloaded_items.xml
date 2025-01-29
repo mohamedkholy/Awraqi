@@ -20,6 +20,32 @@
             android:layout_marginVertical="@dimen/_20sdp"
             tools:listitem="@layout/paper_list_item" />
 
+        <LinearLayout
+            android:id="@+id/no_items_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="invisible"
+            >
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/baseline_auto_stories"
+                app:tint="@color/gray" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No items here yet"
+                android:textColor="@color/gray"
+                />
+
+
+
+        </LinearLayout>
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

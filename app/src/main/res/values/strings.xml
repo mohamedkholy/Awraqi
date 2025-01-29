@@ -7,6 +7,33 @@
     <string name="previous">Previous</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="filter_by">filter by</string>
+    <string name="authentication">Authentication</string>
+    <string name="welcome">Welcome</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="forget_password">forget password?</string>
+    <string name="or">OR</string>
+    <string name="clear_all_pages">Clear all pages</string>
+    <string name="add_note">Add note</string>
+    <string name="highlight">Highlight</string>
+    <string name="clear_draw">clear draw</string>
+    <string name="save">Save</string>
+    <string name="add_note_hint">Add note...</string>
+    <string name="draw">Draw</string>
+    <string name="preferences">Preferences</string>
+    <string name="night_mode">Night mode</string>
+    <string name="language">Language</string>
+    <string name="settings">Settings</string>
+    <string name="sign_in">Sign in</string>
+    <string name="support">Support</string>
+    <string name="buy">Buy</string>
+    <string name="download_preview">Download preview</string>
+    <string name="home">Home</string>
+    <string name="cancel_download">Cancel download</string>
+    <string name="open">Open</string>
+    <string name="page">Page %1$s</string>
+    <string name="clear_page">Clear page %1$s</string>
 
     <array name="filter_spinner">
         <item>purchased</item>
@@ -14,6 +41,11 @@
         <item>faculty</item>
         <item>grade</item>
         <item>subject</item>
+    </array>
+
+    <array name="langs">
+        <item>Arabic</item>
+        <item>English</item>
     </array>
 
 </resources>

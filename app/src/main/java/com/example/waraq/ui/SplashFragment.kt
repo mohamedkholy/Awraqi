@@ -24,7 +24,7 @@ class SplashFragment :
             Context.MODE_PRIVATE
         )
         val userType = sp.getString(Constants.USER_TYPE, null)
-        navigate(SplashFragmentDirections.actionSplashFragmentToUserGraph())
+//        navigate(SplashFragmentDirections.actionSplashFragmentToUserGraph())
 //        if (firebaseAuth.currentUser == null) {
 //            navigate(SplashFragmentDirections.actionSplashFragmentToLoginSignupFragment())
 //        } else if (userType == Constants.ADMIN_USER_TYPE) {

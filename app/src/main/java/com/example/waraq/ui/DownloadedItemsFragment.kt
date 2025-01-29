@@ -1,7 +1,9 @@
 package com.example.waraq.ui
 
 
+import android.os.Bundle
 import android.view.View
+import androidx.activity.addCallback
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
@@ -18,13 +20,16 @@ import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 
 
-class DownloadedItemsFragment : BaseFragment<FragmentDownloadedItemsBinding>(R.layout.fragment_downloaded_items),
+class DownloadedItemsFragment :
+    BaseFragment<FragmentDownloadedItemsBinding>(R.layout.fragment_downloaded_items),
     ItemsAdapter.OnItemActionListener {
 
+    private var searchText = ""
     private val viewModel by activityViewModels<ItemsViewModel>()
     private lateinit var adapter: ItemsAdapter
     private var paperItemList = mutableListOf<PaperItem>()
     private var filter: ItemsFilter = ItemsFilter.PURCHASED
+
 
     override fun setup() {
         setRecyclerManager()
@@ -42,32 +47,45 @@ class DownloadedItemsFragment : BaseFragment<FragmentDownloadedItemsBinding>(R.l
     }
 
     override fun addCallbacks() {
-        viewModel.itemsFilter.observe(viewLifecycleOwner){filter->
-            if( this@DownloadedItemsFragment.filter!=filter){
+
+        requireActivity().onBackPressedDispatcher.addCallback(this) {
+            findNavController().navigate(R.id.storeItemsFragment)
+        }
+
+        viewModel.itemsFilter.observe(viewLifecycleOwner) { filter ->
+            if (this@DownloadedItemsFragment.filter != filter) {
                 this@DownloadedItemsFragment.filter = filter
-                presentOnRecyclerVIew()
+                refreshRecyclerView()
             }
         }
 
-        viewModel.downloadedItemsLiveData.observe(viewLifecycleOwner) {newList->
+        viewModel.downloadedItemsLiveData.observe(viewLifecycleOwner) { newList ->
+            binding.noItemsLayout.visibility =   if (newList.isEmpty()) View.VISIBLE else View.GONE
             paperItemList = newList.toMutableList()
-            presentOnRecyclerVIew()
+            refreshRecyclerView()
         }
+
+
+        viewModel.searchText.observe(viewLifecycleOwner) { searchText ->
+            this@DownloadedItemsFragment.searchText = searchText
+            refreshRecyclerView()
+        }
+
     }
 
-    private fun presentOnRecyclerVIew() {
-        val list = paperItemList.groupBy {
-            when (filter) {
-                ItemsFilter.PURCHASED -> it.isPurchased.toString()
-                ItemsFilter.UNIVERSITY -> it.university
-                ItemsFilter.FACULTY -> it.faculty
-                ItemsFilter.GRADE -> it.grade
-                ItemsFilter.SUBJECT -> it.subject
+    private fun refreshRecyclerView() {
+        val list =
+            paperItemList.filter { it.title!!.contains(searchText, ignoreCase = true) }.groupBy {
+                when (filter) {
+                    ItemsFilter.PURCHASED -> it.isPurchased.toString()
+                    ItemsFilter.UNIVERSITY -> it.university
+                    ItemsFilter.FACULTY -> it.faculty
+                    ItemsFilter.GRADE -> it.grade
+                    ItemsFilter.SUBJECT -> it.subject
+                }
+            }.flatMap { (groupName, items) ->
+                listOf(ListItem.Header(groupName!!)) + items.map { ListItem.Item(it) }
             }
-        }.flatMap {
-                (groupName, items) ->
-            listOf(ListItem.Header(groupName!!)) + items.map { ListItem.Item(it) }
-        }
 
         adapter.submitList(list)
     }

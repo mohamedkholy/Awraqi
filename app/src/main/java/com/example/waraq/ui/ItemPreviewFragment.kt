@@ -15,6 +15,8 @@ import com.example.waraq.viewModels.ItemPreviewViewModel
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import java.net.URL
 
 
@@ -37,15 +39,14 @@ class ItemPreviewFragment :
                     Downloaded.downloaded -> {
                         binding.downloadButton.apply {
                             isEnabled = true
-                            text = "Open"
+                            text = context.getString(R.string.open)
                         }
                        Downloaded.downloaded
                     }
 
                     Downloaded.downloading -> {
                         binding.downloadButton.apply {
-//                            isEnabled = false
-                            text = "Cancel download"
+                            text = context.getString(R.string.cancel_download)
                         }
                         Downloaded.downloading
                     }
@@ -68,7 +69,6 @@ class ItemPreviewFragment :
         val layoutManager = FlexboxLayoutManager(context).apply {
             flexDirection = FlexDirection.ROW
             justifyContent = JustifyContent.SPACE_AROUND
-
         }
         binding.recv.layoutManager = layoutManager
     }
@@ -88,6 +88,18 @@ class ItemPreviewFragment :
 
         binding.backButton.setOnClickListener {
             findNavController().popBackStack()
+        }
+
+        binding.buyButton.setOnClickListener {
+            if (Firebase.auth.currentUser==null)
+            {
+                val action = ItemPreviewFragmentDirections.actionStoreItemsDetailsFragmentToLoginSignupFragment()
+                findNavController().navigate(action)
+            }
+            else
+            {
+
+            }
         }
 
         binding.downloadButton.setOnClickListener {

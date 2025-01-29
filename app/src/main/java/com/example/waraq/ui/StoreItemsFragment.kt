@@ -23,9 +23,11 @@ class StoreItemsFragment : BaseFragment<FragmentStoreItemsBinding>(R.layout.frag
     private var paperItemList = mutableListOf<PaperItem>()
     private lateinit var adapter: ItemsAdapter
     private var filter: ItemsFilter = ItemsFilter.PURCHASED
+    private var searchText = ""
+
 
     override fun setup() {
-       setRecyclerManager()
+        setRecyclerManager()
     }
 
     private fun setRecyclerManager() {
@@ -34,47 +36,58 @@ class StoreItemsFragment : BaseFragment<FragmentStoreItemsBinding>(R.layout.frag
             justifyContent = JustifyContent.SPACE_AROUND
         }
         binding.recv.layoutManager = layoutManager
-        adapter = ItemsAdapter( this)
+        adapter = ItemsAdapter(this)
         binding.recv.adapter = adapter
     }
 
     override fun addCallbacks() {
-        viewModel.itemsFilter.observe(viewLifecycleOwner){filter->
-            if( this@StoreItemsFragment.filter!=filter){
+        viewModel.itemsFilter.observe(viewLifecycleOwner) { filter ->
+            if (this@StoreItemsFragment.filter != filter) {
                 this@StoreItemsFragment.filter = filter
-            presentOnRecyclerVIew()
+                refreshRecyclerView()
             }
         }
 
-        viewModel.storeItemsLiveData.observe(viewLifecycleOwner) {newList->
-            paperItemList = newList.toMutableList()
-            presentOnRecyclerVIew()
+        viewModel.storeItemsLiveData.observe(viewLifecycleOwner) { list ->
+                paperItemList = list.toMutableList()
+                refreshRecyclerView()
+        }
+
+        viewModel.searchText.observe(viewLifecycleOwner) { searchText ->
+               if (searchText!=this@StoreItemsFragment.searchText)
+               {
+                   this@StoreItemsFragment.searchText = searchText
+                   refreshRecyclerView()
+               }
         }
     }
 
-    private fun presentOnRecyclerVIew() {
-        val list = paperItemList.groupBy {
-            when (filter) {
-                ItemsFilter.PURCHASED -> it.isPurchased.toString()
-                ItemsFilter.UNIVERSITY -> it.university
-                ItemsFilter.FACULTY -> it.faculty
-                ItemsFilter.GRADE -> it.grade
-                ItemsFilter.SUBJECT -> it.subject
+    private fun refreshRecyclerView() {
+        val list =
+            paperItemList.filter { it.title!!.contains(searchText, ignoreCase = true) }.groupBy {
+                when (filter) {
+                    ItemsFilter.PURCHASED -> it.isPurchased.toString()
+                    ItemsFilter.UNIVERSITY -> it.university
+                    ItemsFilter.FACULTY -> it.faculty
+                    ItemsFilter.GRADE -> it.grade
+                    ItemsFilter.SUBJECT -> it.subject
+                }
+            }.flatMap { (groupName, items) ->
+                listOf(ListItem.Header(groupName!!)) + items.map { ListItem.Item(it) }
             }
-        }.flatMap {
-                (groupName, items) ->
-            listOf(ListItem.Header(groupName!!)) + items.map { ListItem.Item(it) }
-        }
 
         adapter.submitList(list)
-        binding.progressCircular.visibility=View.GONE
+        binding.progressCircular.visibility = View.GONE
     }
 
     override fun onClick(paperItem: PaperItem) {
-        val action = UserHomeFragmentDirections.actionUserHomeFragmentToStoreItemsDetailsFragment(paperItem)
-        val navHostFragment = requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment_container) as NavHostFragment
+        val action =
+            UserHomeFragmentDirections.actionUserHomeFragmentToStoreItemsDetailsFragment(paperItem)
+        val navHostFragment =
+            requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment_container) as NavHostFragment
         val navController = navHostFragment.findNavController()
         navController.navigate(action)
     }
+
 
 }

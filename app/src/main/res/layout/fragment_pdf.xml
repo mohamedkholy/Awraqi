@@ -304,7 +304,7 @@
                 android:drawablePadding="@dimen/_5sdp"
                 android:drawableTint="@drawable/edit_buttons_selector"
                 android:gravity="center"
-                android:text="Add note"
+                android:text="@string/add_note"
                 android:textAllCaps="false"
                 android:textColor="@drawable/edit_buttons_selector"
                 android:textSize="@dimen/_8ssp" />
@@ -319,7 +319,7 @@
                 android:drawablePadding="@dimen/_5sdp"
                 android:drawableTint="@drawable/edit_buttons_selector"
                 android:gravity="center"
-                android:text="Draw"
+                android:text="@string/draw"
                 android:textColor="@drawable/edit_buttons_selector"
                 android:textSize="@dimen/_8ssp" />
 
@@ -333,7 +333,7 @@
                 android:drawablePadding="@dimen/_5sdp"
                 android:drawableTint="@drawable/edit_buttons_selector"
                 android:gravity="center"
-                android:text="Highlight"
+                android:text="@string/highlight"
                 android:textColor="@drawable/edit_buttons_selector"
                 android:textSize="@dimen/_8ssp" />
 
@@ -347,7 +347,7 @@
                 android:drawablePadding="@dimen/_5sdp"
                 android:drawableTint="@drawable/edit_buttons_selector"
                 android:gravity="center"
-                android:text="clear draw"
+                android:text="@string/clear_draw"
                 android:textAllCaps="false"
                 android:textColor="@drawable/edit_buttons_selector"
                 android:textSize="@dimen/_8ssp" />
@@ -413,7 +413,7 @@
                 android:layout_marginEnd="@dimen/_5sdp"
                 android:paddingHorizontal="@dimen/_5sdp"
                 android:paddingBottom="@dimen/_5sdp"
-                android:text="Save"
+                android:text="@string/save"
                 android:textColor="@color/sky_color"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -433,7 +433,7 @@
                 android:layout_height="@dimen/_100sdp"
                 android:backgroundTint="@color/primary_color"
                 android:gravity="top"
-                android:hint="Add note..."
+                android:hint="@string/add_note_hint"
                 android:textColor="@color/white"
                 android:textColorHint="@color/gray"
                 app:layout_constraintTop_toBottomOf="@id/page" />
@@ -468,7 +468,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:padding="@dimen/_10sdp"
-                    android:text="Clear all pages"
+                    android:text="@string/clear_all_pages"
                     android:textColor="@color/white" />
             </androidx.cardview.widget.CardView>
 

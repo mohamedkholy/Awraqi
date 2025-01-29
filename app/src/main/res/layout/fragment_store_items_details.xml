@@ -9,7 +9,9 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="#FCFCFC"
+        >
 
         <androidx.constraintlayout.widget.ConstraintLayout
 
@@ -132,7 +134,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_20sdp"
                 android:paddingHorizontal="@dimen/_15sdp"
-                android:text="Download preview"
+                android:text="@string/download_preview"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
                 android:textSize="@dimen/_10ssp"
@@ -146,7 +148,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_20sdp"
                 android:paddingHorizontal="@dimen/_15sdp"
-                android:text="Buy"
+                android:text="@string/buy"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
                 android:textSize="@dimen/_10ssp"
