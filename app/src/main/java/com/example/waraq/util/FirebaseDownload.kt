@@ -1,7 +1,7 @@
 package com.example.waraq.util
 
 import android.content.Context
-import com.example.waraq.data.Downloaded
+import com.example.waraq.data.DownloadState
 import com.example.waraq.data.PaperItem
 import com.example.waraq.repository.MyRepository
 import com.google.firebase.ktx.Firebase
@@ -27,7 +27,7 @@ class FirebaseDownload(val context: Context) {
 
     fun downloadBook(paperItem: PaperItem) = callbackFlow {
         item = paperItem
-        saveItem(Downloaded.downloading)
+        saveItem(DownloadState.downloading)
 
         val fileReference = firebaseStorage.getReferenceFromUrl(paperItem.url!!)
         cacheFile = File.createTempFile("temp file", paperItem.title.toString(), context.cacheDir)
@@ -46,7 +46,7 @@ class FirebaseDownload(val context: Context) {
             }
             if (timeOutRepeats > 60) {
                 downloadTask.cancel()
-                saveItem(Downloaded.notDownloded)
+                saveItem(DownloadState.notDownloded)
                 send(Constants.DOWNLOAD_FAILED)
                 delay(1000)
                 cancel()
@@ -71,7 +71,7 @@ class FirebaseDownload(val context: Context) {
                                     close()
                                 } else {
                                     trySend(Constants.DOWNLOAD_FAILED)
-                                    saveItem(Downloaded.notDownloded)
+                                    saveItem(DownloadState.notDownloded)
                                     close()
                                 }
                             }
@@ -80,7 +80,7 @@ class FirebaseDownload(val context: Context) {
                         close()
                     } else {
                         trySend(Constants.DOWNLOAD_FAILED)
-                        saveItem(Downloaded.notDownloded)
+                        saveItem(DownloadState.notDownloded)
                         close()
                     }
                 }
@@ -100,7 +100,7 @@ class FirebaseDownload(val context: Context) {
         return rate
     }
 
-    private fun saveItem(downloadState: Downloaded) {
+    private fun saveItem(downloadState: DownloadState) {
         item.apply {
             this.downloadState = downloadState
             repository.saveItem(this)

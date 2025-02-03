@@ -12,13 +12,19 @@
         android:layout_height="match_parent"
         tools:context=".ui.StoreItemsFragment">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recv"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipe_refresh_Layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginHorizontal="@dimen/_15sdp"
-            android:layout_marginVertical="@dimen/_20sdp"
-            tools:listitem="@layout/paper_list_item" />
+            android:layout_marginVertical="@dimen/_20sdp">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:listitem="@layout/paper_list_item" />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
         <LinearLayout
             android:id="@+id/no_items_layout"
@@ -38,7 +44,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="No items here yet"
+                android:text="@string/no_items_here_yet"
                 android:textColor="@color/gray"
                 />
 

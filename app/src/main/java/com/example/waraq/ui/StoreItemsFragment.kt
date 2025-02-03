@@ -2,6 +2,7 @@ package com.example.waraq.ui
 
 import android.view.View
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.example.waraq.R
@@ -10,10 +11,16 @@ import com.example.waraq.data.ItemsFilter
 import com.example.waraq.data.ListItem
 import com.example.waraq.databinding.FragmentStoreItemsBinding
 import com.example.waraq.data.PaperItem
+import com.example.waraq.data.Purchased
+import com.example.waraq.util.ConnectivityObserver
+import com.example.waraq.util.ConnectivityObserver.ConnectionStatus
 import com.example.waraq.viewModels.ItemsViewModel
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 
 class StoreItemsFragment : BaseFragment<FragmentStoreItemsBinding>(R.layout.fragment_store_items),
@@ -24,9 +31,19 @@ class StoreItemsFragment : BaseFragment<FragmentStoreItemsBinding>(R.layout.frag
     private lateinit var adapter: ItemsAdapter
     private var filter: ItemsFilter = ItemsFilter.PURCHASED
     private var searchText = ""
+    private var connectionStatus: ConnectionStatus = ConnectionStatus.Unavailable
+    private lateinit var connectionStatusSnackBar:Snackbar
 
 
     override fun setup() {
+        binding.swipeRefreshLayout.isRefreshing = true
+        connectionStatusSnackBar = Snackbar.make(
+            requireContext(),
+            binding.recv,
+            "No internet connection",
+            Snackbar.LENGTH_INDEFINITE
+        )
+        setConnectionStatus()
         setRecyclerManager()
     }
 
@@ -41,6 +58,15 @@ class StoreItemsFragment : BaseFragment<FragmentStoreItemsBinding>(R.layout.frag
     }
 
     override fun addCallbacks() {
+
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            if (connectionStatus == ConnectionStatus.Unavailable) {
+                binding.swipeRefreshLayout.isRefreshing = false
+                showNoConnectionSnackBar(true)
+            } else
+                viewModel.getStoreBooks()
+        }
+
         viewModel.itemsFilter.observe(viewLifecycleOwner) { filter ->
             if (this@StoreItemsFragment.filter != filter) {
                 this@StoreItemsFragment.filter = filter
@@ -49,20 +75,52 @@ class StoreItemsFragment : BaseFragment<FragmentStoreItemsBinding>(R.layout.frag
         }
 
         viewModel.storeItemsLiveData.observe(viewLifecycleOwner) { list ->
-                paperItemList = list.toMutableList()
-                refreshRecyclerView()
+            paperItemList = list.toMutableList()
+            refreshRecyclerView()
         }
 
+
         viewModel.searchText.observe(viewLifecycleOwner) { searchText ->
-               if (searchText!=this@StoreItemsFragment.searchText)
-               {
-                   this@StoreItemsFragment.searchText = searchText
-                   refreshRecyclerView()
-               }
+            if (searchText != this@StoreItemsFragment.searchText) {
+                this@StoreItemsFragment.searchText = searchText
+                refreshRecyclerView()
+            }
+        }
+
+
+    }
+
+    private fun showNoConnectionSnackBar(show:Boolean) {
+        if (show)
+            connectionStatusSnackBar.show()
+        else
+            connectionStatusSnackBar.dismiss()
+    }
+
+    private fun setConnectionStatus() {
+        lifecycleScope.launch {
+            ConnectivityObserver(requireContext()).connectionObserver.collect { status ->
+                println(status)
+                if (status == ConnectionStatus.Unavailable) {
+                    showNoConnectionSnackBar(true)
+                }
+                else{
+                    showNoConnectionSnackBar(false)
+                }
+
+                connectionStatus = status
+            }
         }
     }
 
+
     private fun refreshRecyclerView() {
+        if (filter == ItemsFilter.PURCHASED) {
+            paperItemList =
+                paperItemList.sortedByDescending { it.isPurchased == Purchased.PURCHASED }
+                    .toMutableList()
+        }
+
         val list =
             paperItemList.filter { it.title!!.contains(searchText, ignoreCase = true) }.groupBy {
                 when (filter) {
@@ -76,8 +134,9 @@ class StoreItemsFragment : BaseFragment<FragmentStoreItemsBinding>(R.layout.frag
                 listOf(ListItem.Header(groupName!!)) + items.map { ListItem.Item(it) }
             }
 
+
         adapter.submitList(list)
-        binding.progressCircular.visibility = View.GONE
+        binding.swipeRefreshLayout.isRefreshing = false
     }
 
     override fun onClick(paperItem: PaperItem) {

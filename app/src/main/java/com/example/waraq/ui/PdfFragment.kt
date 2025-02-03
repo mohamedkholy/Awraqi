@@ -3,38 +3,52 @@ package com.example.waraq.ui
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.Path
-import android.os.Bundle
+import android.text.InputFilter
+import android.text.InputFilter.LengthFilter
 import android.view.MotionEvent
-import android.view.View.*
+import android.view.View.GONE
+import android.view.View.VISIBLE
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.CompoundButton
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.activity.addCallback
+import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.text.isDigitsOnly
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.waraq.R
-import com.example.waraq.databinding.FragmentPdfBinding
 import com.example.waraq.data.DrawingItem
 import com.example.waraq.data.Notes
 import com.example.waraq.data.PageNotes
 import com.example.waraq.data.PaintData
 import com.example.waraq.data.PathData
+import com.example.waraq.data.Purchased
+import com.example.waraq.databinding.FragmentPdfBinding
 import com.example.waraq.util.CryptoManager
+import com.example.waraq.util.KeyboardUtils
 import com.example.waraq.viewModels.PdfViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.yield
+import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
+import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -50,12 +64,13 @@ class PdfFragment : BaseFragment<FragmentPdfBinding>(R.layout.fragment_pdf) {
     private var isDrawing = false
     private var isHighlighting = false
     private val viewModel: PdfViewModel by viewModels()
-    private var pathMap = HashMap<Int, MutableList<Pair<Path, Paint>>>()
-    private var pathMapCoordinates = HashMap<Int, MutableList<PathData>>()
+    private var drawingPathsMap = HashMap<Int, MutableList<Pair<Path, Paint>>>()
+    private var drawingPathsCoordinatesMap = HashMap<Int, MutableList<PathData>>()
     private var currentPage = 0
     private var notesMap = Notes(HashMap()).notes
     private var alpha = 95
     private var itemId = ""
+    private val item by lazy { args.item }
     private var subtractOffset = 0f
     private var newPathCount = 0
     private var paint = Paint().apply {
@@ -67,23 +82,57 @@ class PdfFragment : BaseFragment<FragmentPdfBinding>(R.layout.fragment_pdf) {
 
 
     override fun setup() {
-        itemId = args.itemId
+        itemId = item.id
 
         loadingPdfJob = CoroutineScope(Dispatchers.IO).launch {
-
             viewModel.getDrawingItem(itemId)?.apply {
-                this@PdfFragment.pathMapCoordinates = this.pathMap
-                this@PdfFragment.pathMap = fromCoordinatesMapToPathMap(pathMapCoordinates)
+                this@PdfFragment.drawingPathsCoordinatesMap = this.pathMap
+                this@PdfFragment.drawingPathsMap =
+                    fromCoordinatesMapToPathMap(drawingPathsCoordinatesMap)
             }
             decryptPdf()
+            yield()
             loadPdf()
         }
+
+
     }
 
-    @SuppressLint("ClickableViewAccessibility")
+
     override fun addCallbacks() {
 
+        setupDrawingTouchListener()
+
+        binding.pageNumber.setOnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                clearPageNumberFocus()
+                true
+            } else {
+                false
+            }
+        }
+
+        binding.pagesCount.setOnClickListener {
+            binding.pageNumber.apply {
+                setSelection(text.length)
+                requestFocus()
+            }
+            KeyboardUtils.openKeyboard(requireContext(), binding.pageNumber)
+        }
+
+        KeyboardVisibilityEvent.setEventListener(requireActivity(),
+            object : KeyboardVisibilityEventListener {
+                override fun onVisibilityChanged(isOpen: Boolean) {
+                    if (!isOpen) {
+                        clearPageNumberFocus()
+                    }
+                }
+            })
+
+
         requireActivity().onBackPressedDispatcher.addCallback(this) {
+            clearPageNumberFocus()
+
             if (binding.drawButton.isChecked)
                 binding.drawButton.isChecked = false
             else if (binding.noteButton.isChecked)
@@ -106,13 +155,16 @@ class PdfFragment : BaseFragment<FragmentPdfBinding>(R.layout.fragment_pdf) {
                 if (isNotBlank()) {
                     notesMap[currentPage] = this
                     binding.noteAlert.visibility = VISIBLE
-                    viewModel.saveNote(
-                        PageNotes(
-                            args.itemId,
-                            Notes(notesMap)
-                        )
-                    )
+                } else {
+                    notesMap.remove(currentPage)
+                    binding.noteAlert.visibility = GONE
                 }
+                viewModel.saveNote(
+                    PageNotes(
+                        itemId,
+                        Notes(notesMap)
+                    )
+                )
             }
 
             binding.addingNote = false
@@ -120,6 +172,7 @@ class PdfFragment : BaseFragment<FragmentPdfBinding>(R.layout.fragment_pdf) {
         }
 
         binding.pdfView.setOnClickListener {
+            clearPageNumberFocus()
             if (!isDrawing || !isHighlighting) {
                 binding.noteButton.isChecked = false
                 binding.clearDrawButton.isChecked = false
@@ -133,46 +186,12 @@ class PdfFragment : BaseFragment<FragmentPdfBinding>(R.layout.fragment_pdf) {
             }
         }
 
-        binding.drawLayout.setOnTouchListener { _, motionEvent: MotionEvent ->
-            if (isDrawing || isHighlighting) {
-                binding.brightnessButton.isChecked=false
-                binding.editThickness.isChecked=false
-                val x = screenToPdfX(motionEvent.x)
-                val y = screenToPdfY(motionEvent.y - subtractOffset)
-                if (pathMap[currentPage] == null) {
-                    pathMap[currentPage] = mutableListOf()
-                    pathMapCoordinates[currentPage] = mutableListOf()
-                }
-                when (motionEvent.action) {
-                    MotionEvent.ACTION_DOWN -> {
-                        pathMap[currentPage]!!.add(Pair(Path(), Paint(paint)))
-                        pathMap[currentPage]!!.last().first.moveTo(x, y)
-                        pathList.add(Pair(x, y))
-                    }
 
-                    MotionEvent.ACTION_MOVE -> {
-                        pathList.add(Pair(x, y))
-                        pathMap[currentPage]!!.last().first.lineTo(x, y)
-                        binding.pdfView.invalidate()
-                    }
 
-                    MotionEvent.ACTION_UP -> {
-                        if (pathList.size > 5) {
-                            binding.newPathCount = ++newPathCount
-                            pathMapCoordinates[currentPage]?.add(preparePathData(pathList))
-                            pathList = mutableListOf()
-                            updateDrawingItem()
-                        }
-                    }
-                }
-                true
-            } else {
-                false
-            }
-        }
 
-        binding.brightnessButton.setOnCheckedChangeListener { compoundButton: CompoundButton, isCkecked: Boolean ->
-            binding.brightnessSeekBar.visibility = if (isCkecked) VISIBLE else GONE
+
+        binding.brightnessButton.setOnCheckedChangeListener { compoundButton: CompoundButton, isChecked: Boolean ->
+            binding.brightnessSeekBar.visibility = if (isChecked) VISIBLE else GONE
         }
 
         binding.brightnessSeekBar.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
@@ -189,8 +208,8 @@ class PdfFragment : BaseFragment<FragmentPdfBinding>(R.layout.fragment_pdf) {
 
         binding.undoButton.setOnClickListener {
             binding.newPathCount = --newPathCount
-            pathMap[currentPage]?.apply { removeAt(lastIndex) }
-            pathMapCoordinates[currentPage]?.apply { removeAt(lastIndex) }
+            drawingPathsMap[currentPage]?.apply { removeAt(lastIndex) }
+            drawingPathsCoordinatesMap[currentPage]?.apply { removeAt(lastIndex) }
             binding.pdfView.invalidate()
             updateDrawingItem()
         }
@@ -212,7 +231,11 @@ class PdfFragment : BaseFragment<FragmentPdfBinding>(R.layout.fragment_pdf) {
                 isDrawing = true
                 binding.isDrawing = isDrawing
                 setChecked(binding.drawButton.id)
+                binding.pageNumber.isFocusable = false
+                binding.pagesCount.isClickable = false
             } else {
+                binding.pageNumber.isFocusableInTouchMode = true
+                binding.pagesCount.isClickable = true
                 isDrawing = false
                 binding.isDrawing = isDrawing
                 if (!isHighlighting) {
@@ -233,7 +256,11 @@ class PdfFragment : BaseFragment<FragmentPdfBinding>(R.layout.fragment_pdf) {
                 binding.thick50.isChecked = true
                 paint.alpha = alpha
                 setChecked(binding.highlightButton.id)
+                binding.pageNumber.isFocusable = false
+                binding.pagesCount.isClickable = false
             } else {
+                binding.pageNumber.isFocusableInTouchMode = true
+                binding.pagesCount.isClickable = true
                 isHighlighting = false
                 binding.isHighlighting = isHighlighting
 
@@ -263,9 +290,9 @@ class PdfFragment : BaseFragment<FragmentPdfBinding>(R.layout.fragment_pdf) {
         }
 
         binding.clearPage.setOnClickListener {
-            pathMap.remove(currentPage)
+            drawingPathsMap.remove(currentPage)
             binding.pdfView.invalidate()
-            pathMapCoordinates.remove(currentPage)
+            drawingPathsCoordinatesMap.remove(currentPage)
             updateDrawingItem()
             binding.clearDrawButton.isChecked = false
         }
@@ -277,9 +304,9 @@ class PdfFragment : BaseFragment<FragmentPdfBinding>(R.layout.fragment_pdf) {
                 setPositiveButton(
                     "Clear All Pages"
                 ) { _, _ ->
-                    pathMap.clear()
+                    drawingPathsMap.clear()
                     binding.pdfView.invalidate()
-                    pathMapCoordinates.clear()
+                    drawingPathsCoordinatesMap.clear()
                     updateDrawingItem()
                     binding.clearDrawButton.isChecked = false
                 }
@@ -292,15 +319,37 @@ class PdfFragment : BaseFragment<FragmentPdfBinding>(R.layout.fragment_pdf) {
 
         }
 
-        binding.openNote.setOnClickListener {
+        binding.noteAlert.setOnClickListener {
             if (binding.noteAlert.visibility == VISIBLE)
                 binding.noteButton.isChecked = !binding.noteButton.isChecked
         }
 
 
-
+        var pageNumber = 1
+        binding.pageNumber.apply {
+            doOnTextChanged { text, _, _, _ ->
+                if (text?.isNotBlank() == true && text.isDigitsOnly() && pageNumber != text.toString()
+                        .toInt() && binding.pageNumber.isFocused
+                ) {
+                    pageNumber = text.toString().toInt()
+                    if (pageNumber <= binding.pdfView.pageCount) {
+                        binding.pdfView.jumpTo(pageNumber - 1)
+                    }
+                }
+            }
+        }
     }
 
+    private fun clearPageNumberFocus() {
+        binding.pageNumber.apply {
+            if (isFocused) {
+                KeyboardUtils.closeKeyboard(requireContext(), binding.pageNumber)
+                binding.pageNumber.clearFocus()
+                binding.root.requestFocus()
+                setText("${currentPage + 1}")
+            }
+        }
+    }
 
     private fun loadPdf() {
         binding.pdfView
@@ -309,9 +358,15 @@ class PdfFragment : BaseFragment<FragmentPdfBinding>(R.layout.fragment_pdf) {
             .onLoad {
                 binding.pdfView.maxZoom = 1f
                 binding.isPdfLoaded = true
+                binding.pagesCount.text = "/ ${binding.pdfView.pageCount}"
                 decryptedFile.delete()
-                initializeTimer()
+                if (item.isPurchased != Purchased.PURCHASED) {
+                    initializeTimer()
+                }
+                binding.pageNumber.filters =
+                    arrayOf<InputFilter>(LengthFilter(binding.pdfView.pageCount.toString().length));
             }
+
             .onDrawAll { canvas, pageWidth, pageHeight, displayedPage ->
                 drawOnPage(canvas, pageWidth, pageHeight, displayedPage)
             }
@@ -319,7 +374,12 @@ class PdfFragment : BaseFragment<FragmentPdfBinding>(R.layout.fragment_pdf) {
                 this@PdfFragment.currentPage = currentPage
                 binding.page.text = getString(R.string.page, "${currentPage + 1}")
                 binding.clearPageTv.text = getString(R.string.clear_page, "${currentPage + 1}")
-                binding.pageNumber.text = "${currentPage + 1}"
+                binding.pageNumber.apply {
+                    if (!isFocused) {
+                        setText("${currentPage + 1}")
+                    }
+                    setSelection(text.length)
+                }
                 notesMap[currentPage].let { note ->
                     binding.noteEt.setText(note)
 
@@ -336,23 +396,22 @@ class PdfFragment : BaseFragment<FragmentPdfBinding>(R.layout.fragment_pdf) {
             .load()
     }
 
-    private suspend fun decryptPdf() {
-        val encryptedFile = File(requireActivity().filesDir, args.fileTitle)
+    private fun decryptPdf() {
+        val encryptedFile = File(requireActivity().filesDir, item.title!!)
         decryptedFile = File.createTempFile("temp file", ".pdf", requireContext().cacheDir)
         CryptoManager().decryptFile(
             FileInputStream(encryptedFile),
             FileOutputStream(decryptedFile)
         )
-        delay(100)
     }
 
     private fun drawOnPage(
         canvas: Canvas?,
         pageWidth: Float,
         pageHeight: Float,
-        displayedPage: Int
+        displayedPage: Int,
     ) {
-        val pathList = pathMap[displayedPage]
+        val pathList = drawingPathsMap[displayedPage]
         if (canvas != null && pathList != null) {
             for (path in pathList) {
                 val currentPath = Path(path.first)
@@ -365,21 +424,21 @@ class PdfFragment : BaseFragment<FragmentPdfBinding>(R.layout.fragment_pdf) {
 
     private fun initializeTimer() {
         binding.timerLayout.visibility = VISIBLE
-        var time = 45
+        var time = 20
         lifecycleScope.launch {
             while (true) {
+                println(time)
                 binding.timer.text = "00:${if (time < 10) "0$time" else time}"
-                time--
+                if (lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
+                    time--
+                }
                 delay(1000)
                 if (time == 0)
                     break
             }
-            //todo
 //            findNavController().popBackStack()
         }
     }
-
-    var pathList = mutableListOf<Pair<Float, Float>>()
 
 
     private fun preparePathData(pathList: MutableList<Pair<Float, Float>>): PathData {
@@ -410,19 +469,66 @@ class PdfFragment : BaseFragment<FragmentPdfBinding>(R.layout.fragment_pdf) {
 
     private fun calculateSubtractOffset() {
         binding.pdfView.apply {
-            val pageSize = binding.pdfView.getPageSize(currentPage)
+            val pageSize = getPageSize(currentPage)
             val scrolledPages = abs(currentYOffset) / pageSize.height
             val pagesOnScreen = currentPage - scrolledPages
             subtractOffset = pagesOnScreen * pageSize.height
         }
     }
 
+    private var pathList = mutableListOf<Pair<Float, Float>>()
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun setupDrawingTouchListener() {
+        binding.drawLayout.setOnTouchListener { _, motionEvent: MotionEvent ->
+            if (isDrawing || isHighlighting) {
+                handleDrawingTouchEvent(motionEvent)
+                true
+            } else {
+                false
+            }
+        }
+    }
+
+    private fun handleDrawingTouchEvent(motionEvent: MotionEvent) {
+        binding.brightnessButton.isChecked = false
+        binding.editThickness.isChecked = false
+        val x = screenToPdfX(motionEvent.x)
+        val y = screenToPdfY(motionEvent.y - subtractOffset)
+        if (drawingPathsMap[currentPage] == null) {
+            drawingPathsMap[currentPage] = mutableListOf()
+            drawingPathsCoordinatesMap[currentPage] = mutableListOf()
+        }
+        when (motionEvent.action) {
+            MotionEvent.ACTION_DOWN -> {
+                drawingPathsMap[currentPage]!!.add(Pair(Path(), Paint(paint)))
+                drawingPathsMap[currentPage]!!.last().first.moveTo(x, y)
+                pathList.add(Pair(x, y))
+            }
+
+            MotionEvent.ACTION_MOVE -> {
+                pathList.add(Pair(x, y))
+                drawingPathsMap[currentPage]!!.last().first.lineTo(x, y)
+                binding.pdfView.invalidate()
+            }
+
+            MotionEvent.ACTION_UP -> {
+                if (pathList.size > 5) {
+                    binding.newPathCount = ++newPathCount
+                    drawingPathsCoordinatesMap[currentPage]?.add(preparePathData(pathList))
+                    pathList = mutableListOf()
+                    updateDrawingItem()
+                }
+            }
+        }
+    }
+
     private fun screenToPdfX(x: Float): Float {
-        return x / (binding.pdfView.getPageSize(currentPage).width) // Normalize X relative to screen width
+        return x / (binding.pdfView.getPageSize(currentPage).width)
     }
 
     private fun screenToPdfY(y: Float): Float {
-        return y / (binding.pdfView.getPageSize(currentPage).height) // Normalize Y relative to screen height
+        return y / (binding.pdfView.getPageSize(currentPage).height)
     }
 
     private fun getPaintDataFromPaint(paint: Paint): PaintData {
@@ -453,17 +559,15 @@ class PdfFragment : BaseFragment<FragmentPdfBinding>(R.layout.fragment_pdf) {
     private fun updateDrawingItem() {
         viewModel.upsertDrawingItem(
             DrawingItem(
-                args.itemId,
-                pathMapCoordinates
+                itemId,
+                drawingPathsCoordinatesMap
             )
         )
     }
 
-
     override fun onDestroy() {
         super.onDestroy()
         loadingPdfJob.cancel()
-        println("lifeCycleOwner is destroyed")
     }
 
 

@@ -1,24 +1,45 @@
 package com.example.waraq.ui
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.widget.Toast
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.navigation.fragment.findNavController
 import com.example.waraq.R
 import com.example.waraq.databinding.FragmentSettingBinding
 import com.example.waraq.util.Constants
+import com.example.waraq.util.EmailPreferences
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 
 
-class SettingFragment:BaseFragment<FragmentSettingBinding>(R.layout.fragment_setting){
+class SettingFragment : BaseFragment<FragmentSettingBinding>(R.layout.fragment_setting) {
 
 
     override fun setup() {
-        val sp =requireActivity().getSharedPreferences(Constants.DEFAULT_SHARED_PREFERENCES,Context.MODE_PRIVATE)
-        val email = sp.getString(Constants.EMAIL_KEY,null)
-
-        if (email!=null) {
-            binding.signIn.text = email
-            binding.signIn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.baseline_account_circle_24,0,0,0)
+        val email: String?
+        runBlocking {
+            email = EmailPreferences.getEmail(requireContext())
         }
-        else { binding.signIn.setOnClickListener { findNavController().navigate(R.id.loginSignupFragment) } }
+
+
+
+        if (email != null) {
+            binding.signIn.text = email
+            binding.signIn.setCompoundDrawablesWithIntrinsicBounds(
+                R.drawable.baseline_account_circle_24,
+                0,
+                0,
+                0
+            )
+        } else {
+            binding.signIn.setOnClickListener { findNavController().navigate(R.id.loginSignupFragment) }
+        }
 
     }
 
@@ -28,9 +49,26 @@ class SettingFragment:BaseFragment<FragmentSettingBinding>(R.layout.fragment_set
         }
 
         binding.preferences.setOnClickListener {
-         findNavController().navigate(R.id.preferencesFragment)
+            findNavController().navigate(R.id.preferencesFragment)
         }
 
+        binding.helpSupport.setOnClickListener {
+            sendSupportEmail()
+        }
+
+    }
+
+    private fun sendSupportEmail() {
+        val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
+            data = Uri.parse("mailto:")
+            putExtra(Intent.EXTRA_EMAIL, arrayOf(Constants.SUPPORT_EMAIL))
+        }
+
+        if (emailIntent.resolveActivity(requireContext().packageManager) != null) {
+            requireContext().startActivity(emailIntent)
+        } else {
+            Toast.makeText(context, "No email app found", Toast.LENGTH_SHORT).show()
+        }
     }
 
 

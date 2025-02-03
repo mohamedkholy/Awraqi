@@ -12,27 +12,19 @@
         android:layout_height="match_parent"
         tools:context=".ui.StoreItemsFragment">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recv"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipe_refresh_Layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginVertical="@dimen/_20sdp"
             android:layout_marginHorizontal="@dimen/_15sdp"
-            tools:listitem="@layout/paper_list_item"
-            />
+            android:layout_marginVertical="@dimen/_20sdp">
 
-
-            <ProgressBar
-                android:id="@+id/progress_circular"
-                android:layout_width="@dimen/_70sdp"
-                android:layout_height="@dimen/_70sdp"
-                android:indeterminateTint="@color/primary_color"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                />
-
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:listitem="@layout/paper_list_item" />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -34,11 +34,8 @@
         android:name="com.example.waraq.ui.PdfFragment"
         android:label="PdfFragment" >
         <argument
-            android:name="file_title"
-            app:argType="string" />
-        <argument
-            android:name="item_id"
-            app:argType="string" />
+            android:name="item"
+            app:argType="com.example.waraq.data.PaperItem" />
     </fragment>
 
     <fragment

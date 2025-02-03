@@ -1,14 +1,20 @@
 package com.example.waraq.ui
 
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import com.example.waraq.R
 import com.example.waraq.databinding.FragmentSplashBinding
 import com.example.waraq.util.Constants
+import com.example.waraq.util.UserTypePreferences
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
@@ -19,11 +25,10 @@ class SplashFragment :
     private val firebaseAuth = FirebaseAuth.getInstance()
 
     override fun setup() {
-        val sp = requireContext().getSharedPreferences(
-            Constants.DEFAULT_SHARED_PREFERENCES,
-            Context.MODE_PRIVATE
-        )
-        val userType = sp.getString(Constants.USER_TYPE, null)
+        val userType:String?
+        runBlocking {
+            userType = UserTypePreferences.getUserType(requireContext())
+        }
 //        navigate(SplashFragmentDirections.actionSplashFragmentToUserGraph())
 //        if (firebaseAuth.currentUser == null) {
 //            navigate(SplashFragmentDirections.actionSplashFragmentToLoginSignupFragment())

@@ -1,23 +1,25 @@
 package com.example.waraq.ui
 
-
-import android.os.Bundle
 import android.view.View
 import androidx.activity.addCallback
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.example.waraq.R
 import com.example.waraq.adapters.ItemsAdapter
-import com.example.waraq.data.Downloaded
+import com.example.waraq.data.DownloadState
 import com.example.waraq.data.ItemsFilter
 import com.example.waraq.data.ListItem
 import com.example.waraq.data.PaperItem
+import com.example.waraq.data.Purchased
 import com.example.waraq.databinding.FragmentDownloadedItemsBinding
 import com.example.waraq.viewModels.ItemsViewModel
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
+import kotlinx.coroutines.launch
+
 
 
 class DownloadedItemsFragment :
@@ -35,6 +37,21 @@ class DownloadedItemsFragment :
         setRecyclerManager()
     }
 
+
+    private suspend fun refreshPurchasedItems() {
+        val iDsList=viewModel.getUserBooksIds()
+        if (iDsList.isNotEmpty()) {
+            paperItemList.forEach { item ->
+                if (iDsList.contains(item.id)&&item.isPurchased!=Purchased.PURCHASED){
+                    item.isPurchased = Purchased.PURCHASED
+                    viewModel.updateItem(item)
+                }
+            }
+        }
+        binding.swipeRefreshLayout.isRefreshing=false
+        refreshRecyclerView()
+    }
+
     private fun setRecyclerManager() {
         val layoutManager = FlexboxLayoutManager(context).apply {
             flexDirection = FlexDirection.ROW
@@ -48,6 +65,12 @@ class DownloadedItemsFragment :
 
     override fun addCallbacks() {
 
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            lifecycleScope.launch {
+                refreshPurchasedItems()
+            }
+        }
+
         requireActivity().onBackPressedDispatcher.addCallback(this) {
             findNavController().navigate(R.id.storeItemsFragment)
         }
@@ -60,20 +83,31 @@ class DownloadedItemsFragment :
         }
 
         viewModel.downloadedItemsLiveData.observe(viewLifecycleOwner) { newList ->
-            binding.noItemsLayout.visibility =   if (newList.isEmpty()) View.VISIBLE else View.GONE
+            binding.noItemsLayout.visibility = if (newList.isEmpty()) View.VISIBLE else View.GONE
             paperItemList = newList.toMutableList()
+            lifecycleScope.launch {
+                refreshPurchasedItems()
+            }
             refreshRecyclerView()
         }
 
 
         viewModel.searchText.observe(viewLifecycleOwner) { searchText ->
-            this@DownloadedItemsFragment.searchText = searchText
-            refreshRecyclerView()
+            if (searchText != this@DownloadedItemsFragment.searchText) {
+                this@DownloadedItemsFragment.searchText = searchText
+                refreshRecyclerView()
+            }
         }
 
     }
 
     private fun refreshRecyclerView() {
+        if (filter == ItemsFilter.PURCHASED) {
+            paperItemList =
+                paperItemList.sortedByDescending { it.isPurchased == Purchased.PURCHASED }
+                    .toMutableList()
+        }
+
         val list =
             paperItemList.filter { it.title!!.contains(searchText, ignoreCase = true) }.groupBy {
                 when (filter) {
@@ -92,10 +126,9 @@ class DownloadedItemsFragment :
 
 
     override fun onClick(paperItem: PaperItem) {
-        if (paperItem.downloadState != Downloaded.notDownloded) {
+        if (paperItem.downloadState != DownloadState.notDownloded) {
             val action = UserHomeFragmentDirections.actionUserHomeFragmentToPdfFragment(
-                paperItem.title!!,
-                paperItem.id
+                paperItem
             )
             val navHostFragment =
                 requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment_container) as NavHostFragment

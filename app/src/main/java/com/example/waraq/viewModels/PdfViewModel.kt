@@ -1,5 +1,7 @@
 package com.example.waraq.viewModels
 
+import android.app.Application
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -30,10 +32,5 @@ class PdfViewModel:ViewModel(){
            myRepository.saveNote(pageNote)
        }
     }
-
-    override fun onCleared() {
-        super.onCleared()
-    }
-
 
 }

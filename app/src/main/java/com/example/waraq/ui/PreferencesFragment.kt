@@ -7,6 +7,7 @@ import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.CompoundButton
 import android.widget.TextView
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.waraq.MainActivity
 import com.example.waraq.R
@@ -15,6 +16,9 @@ import com.example.waraq.data.ThemePreference
 import com.example.waraq.databinding.FragmentPreferencesBinding
 import com.example.waraq.util.LanguagePreference
 import com.example.waraq.util.LocaleHelper
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 
 class PreferencesFragment :
@@ -22,9 +26,11 @@ class PreferencesFragment :
 
 
     override fun setup() {
-        var lang = LanguagePreference.getLanguage(requireContext())
-        lang?.apply {
-            binding.langSpinner.setSelection(if (lang=="en")  1 else 0)
+        runBlocking {
+            val lang = LanguagePreference.getLanguage(requireContext())
+            lang?.apply {
+                binding.langSpinner.setSelection(if (lang == "en") 1 else 0)
+            }
         }
     }
 
@@ -34,14 +40,19 @@ class PreferencesFragment :
         }
 
         binding.nightModeSwitch.apply {
-            if (ThemePreference.isNightModeEnabled(requireContext()))
-                isChecked = true
-            post{
-                setOnCheckedChangeListener{ compoundButton: CompoundButton, b: Boolean ->
-                    ThemePreference.setNightMode(requireContext(),b)
-                    restartApp()
+            runBlocking {
+                if (ThemePreference.isNightModeEnabled(requireContext()))
+                    isChecked = true
+            }
+            post {
+                setOnCheckedChangeListener { compoundButton: CompoundButton, b: Boolean ->
+                    lifecycleScope.launch {
+                        ThemePreference.setNightMode(requireContext(), b)
+                        restartApp()
+                    }
+
                 }
-        }
+            }
         }
         binding.langSpinner.apply {
             post {
@@ -53,8 +64,14 @@ class PreferencesFragment :
                         p3: Long
                     ) {
                         val lang = (view as TextView).text.toString().uppercase()
-                        LanguagePreference.saveLanguage(requireContext(), Languages.valueOf(lang).code)
-                        restartApp()
+                        lifecycleScope.launch {
+                            LanguagePreference.saveLanguage(
+                                requireContext(),
+                                Languages.valueOf(lang).code
+                            )
+                            restartApp()
+                        }
+
                     }
 
                     override fun onNothingSelected(p0: AdapterView<*>?) {}
@@ -64,10 +81,9 @@ class PreferencesFragment :
     }
 
 
-
     fun restartApp() {
         val intent = Intent(requireContext(), MainActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK and Intent.FLAG_ACTIVITY_NEW_TASK
         requireContext().startActivity(intent)
     }
 

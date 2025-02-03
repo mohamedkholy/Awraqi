@@ -3,13 +3,13 @@
 
     <item
         android:id="@+id/storeItemsFragment"
-        android:title="Store"
+        android:title="@string/store"
         android:icon="@drawable/baseline_auto_stories"
          />
 
     <item
         android:id="@+id/DownloadedFragment"
-        android:title="Downloads"
+        android:title="@string/downloads"
         android:icon="@drawable/baseline_boy"
       />
 

@@ -1,12 +1,8 @@
 <resources>
     <string name="app_name">waraq</string>
     <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
-
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="filter_by">filter by</string>
     <string name="authentication">Authentication</string>
     <string name="welcome">Welcome</string>
@@ -30,10 +26,23 @@
     <string name="buy">Buy</string>
     <string name="download_preview">Download preview</string>
     <string name="home">Home</string>
-    <string name="cancel_download">Cancel download</string>
+    <string name="cancel_download">Cancel download %1$s</string>
     <string name="open">Open</string>
     <string name="page">Page %1$s</string>
     <string name="clear_page">Clear page %1$s</string>
+    <string name="downloads">Downloads</string>
+    <string name="store">Store</string>
+    <string name="no_items_here_yet">No items here yet</string>
+    <string name="download">Download</string>
+    <string name="downloading_items">downloading items</string>
+    <string name="is_downloading">%1$s is downloading</string>
+    <string name="download_failed">%1$s download failed</string>
+    <string name="download_canceled">%1$s download canceled</string>
+    <string name="is_downloaded">%1$s is downloaded</string>
+    <string name="loading_the_file">Loading the file</string>
+    <string name="signup">Signup</string>
+    <string name="login">Login</string>
+    <string name="pages">%1$s pages</string>
 
     <array name="filter_spinner">
         <item>purchased</item>

@@ -6,16 +6,25 @@ import android.util.Patterns
 import androidx.activity.addCallback
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
+import androidx.datastore.core.DataStore
+import androidx.datastore.dataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.waraq.R
 import com.example.waraq.databinding.FragmentLoginSignupBinding
 import com.example.waraq.util.Constants
+import com.example.waraq.util.EmailPreferences
+import com.example.waraq.util.UserTypePreferences
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import java.util.regex.Pattern
 
@@ -25,13 +34,8 @@ class LoginSignupFragment :
 
     private val firebaseAuth = FirebaseAuth.getInstance()
     private val firestore = Firebase.firestore
-    private lateinit var sp: SharedPreferences
 
     override fun setup() {
-        sp = requireContext().getSharedPreferences(
-            Constants.DEFAULT_SHARED_PREFERENCES,
-            Context.MODE_PRIVATE
-        )
         binding.isLogging = false
         binding.isSigning = false
     }
@@ -92,7 +96,7 @@ class LoginSignupFragment :
             binding.isSigning = true
             firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnSuccessListener {
-                    onSignupSuccess(userId = it.user!!.uid, email = email)
+                    onSignupSuccess( email)
                 }.addOnFailureListener {
                     binding.isSigning = false
                     Snackbar.make(binding.root, "Signup failed", Snackbar.LENGTH_LONG).show()
@@ -110,7 +114,7 @@ class LoginSignupFragment :
             firebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnSuccessListener {
                     lifecycleScope.launch {
-                        onLoginSuccess(userId = it.user!!.uid,email)
+                        onLoginSuccess(email)
                     }
                 }.addOnFailureListener {
                     binding.isLogging = false
@@ -120,15 +124,15 @@ class LoginSignupFragment :
 
     }
 
-    private suspend fun onLoginSuccess(userId: String, email: String) {
+    private suspend fun onLoginSuccess(email: String) {
         val student =
-            firestore.collection(Constants.FIRE_STORE_STUDENT_COLLECTION).document(userId).get()
+            firestore.collection(Constants.FIRE_STORE_USERS_COLLECTION).document(email).get()
                 .await()
         if (student.exists()) {
             setUserTypeAndNavigateScreen(Constants.USER_TYPE, email)
         } else {
             val admin =
-                firestore.collection(Constants.FIRE_STORE_ADMIN_COLLECTION).document(userId).get()
+                firestore.collection(Constants.FIRE_STORE_ADMIN_COLLECTION).document(email).get()
                     .await()
             if (admin.exists()) {
                 setUserTypeAndNavigateScreen(Constants.ADMIN_USER_TYPE, email)
@@ -152,11 +156,13 @@ class LoginSignupFragment :
         return validEmail && validPassword
     }
 
-    private fun onSignupSuccess(userId: String, email: String) {
+    private fun onSignupSuccess(email: String) {
         val map = mapOf("email" to email)
-        firestore.collection(Constants.FIRE_STORE_STUDENT_COLLECTION)
-            .document(userId).set(map).addOnSuccessListener {
-                setUserTypeAndNavigateScreen(Constants.USER_TYPE,email)
+        firestore.collection(Constants.FIRE_STORE_USERS_COLLECTION)
+            .document(email).set(map).addOnSuccessListener {
+                runBlocking {
+                    setUserTypeAndNavigateScreen(Constants.USER_TYPE,email)
+                }
             }.addOnFailureListener {
                 binding.isSigning = false
             }
@@ -173,9 +179,10 @@ class LoginSignupFragment :
         return matcher.matches()
     }
 
-    private fun setUserTypeAndNavigateScreen(userType: String, email: String) {
-        sp.edit().putString(Constants.USER_TYPE, userType).apply()
-        sp.edit().putString(Constants.EMAIL_KEY, email).apply()
+    private suspend fun setUserTypeAndNavigateScreen(userType: String, email: String) {
+        EmailPreferences.saveEmail(requireContext(),email)
+        UserTypePreferences.saveUserType(requireContext(),userType)
+        println(4)
         binding.isLogging = false
         binding.isSigning = false
         findNavController().popBackStack()

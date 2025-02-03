@@ -9,9 +9,10 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
 import com.example.waraq.R
-import com.example.waraq.data.Downloaded
+import com.example.waraq.data.DownloadState
 import com.example.waraq.data.ListItem
 import com.example.waraq.data.PaperItem
 import java.io.File
@@ -67,11 +68,22 @@ class ItemsAdapter(val listener: OnItemActionListener) :
         when (holder) {
             is MyItemHolder -> {
                 val item = (differ.currentList[holder.adapterPosition] as ListItem.Item).data
-                if (item.downloadState==Downloaded.downloaded)
-                    Glide.with(holder.view.context).load(File(holder.view.context.filesDir,item.title+"-cover")).into(holder.image)
-                else
-                Glide.with(holder.view.context).load(URL(item.coverUrl.toString()))
-                    .into(holder.image)
+
+                if (item.downloadState == DownloadState.downloaded){
+                    Glide.with(holder.view.context)
+                        .load(File(holder.view.context.filesDir, item.title + "-cover"))
+                        .into(holder.image)
+                }
+                else {
+                    val circularProgressDrawable = CircularProgressDrawable(holder.view.context).apply {
+                        strokeWidth = 5f
+                        centerRadius = 30f
+                        start()
+                    }
+                    Glide.with(holder.view.context).load(URL(item.coverUrl.toString()))
+                        .placeholder(circularProgressDrawable).into(holder.image)
+                }
+
                 holder.textView.text = item.title
                 holder.view.setOnClickListener {
                     listener.onClick(item)

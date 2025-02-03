@@ -1,17 +1,21 @@
 package com.example.waraq.viewModels
 
+import android.app.Application
+import android.content.Context
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.waraq.data.ItemsFilter
 import com.example.waraq.data.PaperItem
 import com.example.waraq.repository.MyRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class ItemsViewModel: ViewModel() {
+class ItemsViewModel(private val application: Application): AndroidViewModel(application) {
 
-    private val repository= MyRepository()
+    private val repository= MyRepository(getAppContext())
     private val _storeItemsLiveData = MutableLiveData<List<PaperItem>>()
     var storeItemsLiveData: LiveData<List<PaperItem>> = _storeItemsLiveData
     var downloadedItemsLiveData:LiveData<List<PaperItem>> = MutableLiveData()
@@ -19,20 +23,40 @@ class ItemsViewModel: ViewModel() {
     val searchText = MutableLiveData<String>()
 
 
-    private fun getAllStoreBooks(){
+     fun getStoreBooks(){
         viewModelScope.launch {
             _storeItemsLiveData.postValue( repository.getAllStoreItems())
         }
     }
 
+
     private fun getDownLoadedItems(){
         downloadedItemsLiveData = repository.getAllDownloadedItems()
+    }
+
+    suspend fun getUserBooksIds(): List<String> {
+       return withContext(Dispatchers.Default){
+           return@withContext repository.getUserBooksIds()
+       }
+    }
+
+
+    fun updateItem(item: PaperItem)
+    { viewModelScope.launch {
+            repository.saveItem(item)
+        }
+    }
+
+
+
+    private fun getAppContext(): Context {
+        return getApplication<Application>().applicationContext
     }
 
 
 
     init {
-        getAllStoreBooks()
+        getStoreBooks()
         getDownLoadedItems()
     }
 

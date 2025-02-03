@@ -41,7 +41,10 @@
             app:layout_constraintBottom_toTopOf="@id/edit_radio_group"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            >
 
             <View
                 android:id="@+id/draw_layout"
@@ -366,6 +369,18 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:text="@string/loading_the_file"
+            android:textColor="@color/primary_color"
+            android:textSize="@dimen/_20sdp"
+            android:visibility="@{isPdfLoaded? View.GONE:View.VISIBLE}"
+            app:layout_constraintEnd_toEndOf="@id/progress_circular"
+            app:layout_constraintStart_toStartOf="@id/progress_circular"
+            app:layout_constraintTop_toBottomOf="@id/progress_circular" />
+
         <LinearLayout
             android:id="@+id/timer_layout"
             android:layout_width="wrap_content"
@@ -376,7 +391,7 @@
             android:gravity="center"
             android:orientation="vertical"
             android:padding="@dimen/_10sdp"
-            android:visibility="invisible"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -497,33 +512,57 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <LinearLayout
-            android:id="@+id/open_note"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:minWidth="@dimen/_30sdp"
+            android:background="@drawable/small_round_corner_shape"
+            android:backgroundTint="@color/dark_gray"
+            android:visibility="@{isPdfLoaded? View.VISIBLE:View.GONE}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/timer_layout"
+            android:layout_marginTop="@dimen/_5sdp"
+            >
+            <EditText
+                android:id="@+id/page_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/dark_gray"
+                android:lines="1"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:textSize="@dimen/_10ssp"
+                android:paddingStart="@dimen/_5sdp"
+                android:inputType="number"
+                />
+            <TextView
+                android:id="@+id/pages_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:lines="1"
+                android:paddingEnd="@dimen/_5sdp"
+                android:textSize="@dimen/_10ssp"
+                />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/note_alert"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/_5sdp"
             android:background="@drawable/small_round_corner_shape"
             android:backgroundTint="@color/dark_gray"
-            android:orientation="vertical"
             android:padding="@dimen/_5sdp"
-            android:visibility="@{isPdfLoaded? View.VISIBLE:View.GONE}"
+            android:src="@drawable/baseline_comment_bank_24"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <TextView
-                android:id="@+id/page_number"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:padding="@dimen/_10sdp"
-                android:textColor="@color/white" />
-
-            <ImageView
-                android:id="@+id/note_alert"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/baseline_comment_bank_24" />
-        </LinearLayout>
+            app:layout_constraintTop_toTopOf="parent"
+            />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

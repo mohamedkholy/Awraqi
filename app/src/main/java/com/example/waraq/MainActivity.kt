@@ -4,15 +4,18 @@ import android.Manifest
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.preference.PreferenceDataStore
 import android.view.Window
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.lifecycleScope
 import com.example.waraq.data.ThemePreference
 import com.example.waraq.dataBase.MyDatabase
 import com.example.waraq.databinding.ActivityMainBinding
+import com.example.waraq.util.Constants
 import com.example.waraq.util.LanguagePreference
 import com.example.waraq.util.LocaleHelper
 import com.example.waraq.util.SecurityManager
@@ -20,6 +23,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+
 
 
 class MainActivity : AppCompatActivity() {
@@ -28,8 +33,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        lifecycleScope.launch { setNightMode() }
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-        setNightMode()
         setContentView(binding.root)
         MyDatabase.createInstance(this)
         requestNotificationPermission()
@@ -57,7 +62,7 @@ class MainActivity : AppCompatActivity() {
 //        }
     }
 
-    private fun setNightMode() {
+    private suspend fun setNightMode() {
         val isNightModeEnabled = ThemePreference.isNightModeEnabled(this)
         if (isNightModeEnabled) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
@@ -75,8 +80,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun attachBaseContext(base: Context) {
-        val lang = LanguagePreference.getLanguage(base)
-        super.attachBaseContext(if (lang != null) LocaleHelper.updateLanguage(base, lang) else base)
+       runBlocking {
+           val lang = LanguagePreference.getLanguage(base)
+           super.attachBaseContext(if (lang != null) LocaleHelper.updateLanguage(base, lang) else base)
+       }
     }
 
 

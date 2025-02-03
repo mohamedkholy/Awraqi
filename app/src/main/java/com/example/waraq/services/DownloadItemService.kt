@@ -6,19 +6,23 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.os.Bundle
 import android.os.IBinder
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import com.example.waraq.R
-import com.example.waraq.data.Downloaded
+import com.example.waraq.data.DownloadState
 import com.example.waraq.data.PaperItem
 import com.example.waraq.repository.MyRepository
 import com.example.waraq.util.Constants
 import com.example.waraq.util.CryptoManager
 import com.example.waraq.util.FirebaseDownload
+import com.example.waraq.util.LanguagePreference
+import com.example.waraq.util.LocaleHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.io.File
 import java.io.FileOutputStream
 import kotlin.math.abs
@@ -26,6 +30,18 @@ import kotlin.math.abs
 class DownloadItemService : Service() {
 
     private lateinit var notificationManager: NotificationManager
+
+    override fun attachBaseContext(base: Context) {
+        runBlocking {
+            val lang = LanguagePreference.getLanguage(base)
+            super.attachBaseContext(
+                if (lang != null) LocaleHelper.updateLanguage(
+                    base,
+                    lang
+                ) else base
+            )
+        }
+    }
 
     override fun onBind(p0: Intent?): IBinder? {
         return null
@@ -56,12 +72,25 @@ class DownloadItemService : Service() {
 
     }
 
-    private suspend fun startDownload(item: PaperItem) {
 
-        startForeground(abs(item.hashCode())+1, getNotification(null, "downloading items"))
+    private suspend fun startDownload(item: PaperItem) {
+        startForeground(
+            abs(item.hashCode()) + 1, getNotification(
+                null,
+                getString(R.string.downloading_items),
+                item.title!!
+            )
+        )
         FirebaseDownload(this).downloadBook(item).collect { result ->
             if (result is Int) {
-                showNotification(abs(item.id.hashCode()), getNotification(result, "${item.title!!} is downloading"))
+                showNotification(
+                    abs(item.id.hashCode()), getNotification(
+                        result,
+                        getString(R.string.is_downloading, item.title)
+                        ,
+                        item.title
+                    )
+                )
             }
 
             when (result) {
@@ -69,11 +98,12 @@ class DownloadItemService : Service() {
                     CoroutineScope(Dispatchers.Main).launch {
                         Toast.makeText(
                             this@DownloadItemService,
-                            "${item.title} download failed",
+                            getString(R.string.download_failed, item.title),
                             Toast.LENGTH_LONG
                         ).show()
                     }
                     stopForeground(STOP_FOREGROUND_REMOVE)
+                    removeNotification()
                     stopSelf()
                 }
 
@@ -81,19 +111,26 @@ class DownloadItemService : Service() {
                     CoroutineScope(Dispatchers.Main).launch {
                         Toast.makeText(
                             this@DownloadItemService,
-                            "${item.title} download canceled",
+                            getString(R.string.download_canceled, item.title),
                             Toast.LENGTH_LONG
                         ).show()
                     }
                     stopForeground(STOP_FOREGROUND_REMOVE)
+                    removeNotification()
                     stopSelf()
                 }
 
                 is File -> {
-                    showNotification(abs(item.id.hashCode()),getNotification( null, "${item.title!!} is downloaded"))
+                    showNotification(
+                        abs(item.id.hashCode()), getNotification(
+                            null,
+                            getString(R.string.is_downloaded, item.title),
+                            item.title
+                        )
+                    )
                     val outFile = File(filesDir, item.title)
                     CryptoManager().encryptFile(result, FileOutputStream(outFile))
-                    item.downloadState = Downloaded.downloaded
+                    item.downloadState = DownloadState.downloaded
                     MyRepository().saveItem(item)
                     stopSelf()
                 }
@@ -106,17 +143,26 @@ class DownloadItemService : Service() {
         }
     }
 
-    fun getNotification(progress: Int?, title: String): Notification {
+    private fun removeNotification() {
+        notificationManager.cancelAll()
+    }
 
+    private fun getNotification(progress: Int?, notificationTitle: String, itemTitle:String): Notification {
         val notification =
             NotificationCompat.Builder(this, Constants.DOWNLOAD_NOTIFICATION_CHANNEL_ID).apply {
                 setSmallIcon(R.drawable.baseline_auto_stories)
-                setContentTitle(title)
+                setContentTitle(notificationTitle)
                 if (progress != null) {
+                    setContentTitle("$progress% - $notificationTitle")
                     setProgress(100, progress, false)
                     setOngoing(true)
-                }
-                else{
+                    sendBroadcast(Intent(itemTitle).apply {
+                        setPackage(packageName)
+                        putExtras(Bundle().apply {
+                            putInt(Constants.DOWNLOAD_PROGRESS_KEY,progress)
+                        })
+                    })
+                } else {
                     setPriority(NotificationManager.IMPORTANCE_HIGH)
                 }
             }.build()
@@ -124,7 +170,7 @@ class DownloadItemService : Service() {
         return notification
     }
 
-    fun showNotification(notificationId: Int, notification: Notification) {
+    private fun showNotification(notificationId: Int, notification: Notification) {
         notificationManager.notify(notificationId, notification)
     }
 

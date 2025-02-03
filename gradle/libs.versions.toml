@@ -1,6 +1,7 @@
 [versions]
 agp = "8.7.3"
 androidPdfViewer = "3.2.0-beta.1"
+datastore = "1.1.2"
 firebaseBom = "33.4.0"
 firebaseBomVersion = "33.7.0"
 flexbox = "3.0.0"
@@ -28,15 +29,19 @@ playServicesBase = "18.5.0"
 roomKtx = "2.6.1"
 sdpAndroid = "1.0.5"
 sspAndroid = "1.0.5"
+swiperefreshlayout = "1.1.0"
 
 [libraries]
 android-pdf-viewer = { module = "com.github.barteksc:android-pdf-viewer", version.ref = "androidPdfViewer" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
 androidx-navigation-safe-args-gradle-plugin = { module = "androidx.navigation:navigation-safe-args-gradle-plugin", version.ref = "navigationSafeArgsGradlePlugin" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomKtx" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomKtx" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomKtx" }
+androidx-swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefreshlayout" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-auth = { module = "com.google.firebase:firebase-auth" }
 firebase-bom-v3340 = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }

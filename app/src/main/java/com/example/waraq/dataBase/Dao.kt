@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
-import com.example.waraq.data.Downloaded
+import com.example.waraq.data.DownloadState
 import com.example.waraq.data.DrawingItem
 import com.example.waraq.data.Notes
 import com.example.waraq.data.PageNotes
@@ -20,7 +20,7 @@ interface Dao {
 
 
     @Query("select downloadState from PaperItem where id= :id ")
-    fun getItemDownloadState(id: String): LiveData<Downloaded>
+    fun getItemDownloadState(id: String): LiveData<DownloadState>
 
     @Upsert
     suspend fun upsertDrawingItem(drawingItem: DrawingItem)

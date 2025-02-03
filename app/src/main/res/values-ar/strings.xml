@@ -1,6 +1,59 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">ورق</string>
+    <string name="next">التالي</string>
+    <string name="previous">السابق</string>
+    <string name="filter_by">تصفية حسب</string>
+    <string name="authentication">المصادقة</string>
+    <string name="welcome">مرحبًا</string>
+    <string name="email">البريد الإلكتروني</string>
+    <string name="password">كلمة المرور</string>
+    <string name="forget_password">هل نسيت كلمة المرور؟</string>
+    <string name="or">أو</string>
+    <string name="clear_all_pages">مسح جميع الصفحات</string>
+    <string name="add_note">إضافة ملاحظة</string>
+    <string name="highlight">تمييز</string>
+    <string name="clear_draw">مسح الرسم</string>
+    <string name="save">حفظ</string>
+    <string name="add_note_hint">أضف ملاحظة...</string>
+    <string name="draw">رسم</string>
+    <string name="preferences">التفضيلات</string>
+    <string name="night_mode">الوضع الليلي</string>
+    <string name="language">اللغة</string>
+    <string name="settings">الإعدادات</string>
+    <string name="sign_in">تسجيل الدخول</string>
+    <string name="support">الدعم</string>
+    <string name="buy">شراء</string>
+    <string name="download_preview">تحميل المعاينة</string>
+    <string name="home">الرئيسية</string>
+    <string name="cancel_download">%1$s إلغاء التحميل</string>
+    <string name="open">فتح</string>
+    <string name="page">الصفحة %1$s</string>
+    <string name="clear_page">مسح الصفحة %1$s</string>
+    <string name="downloads">التحميلات</string>
+    <string name="store">المتجر</string>
+    <string name="no_items_here_yet">لا توجد عناصر محملة بعد</string>
+    <string name="download">تحميل</string>
+    <string name="downloading_items">جاري تنزيل العناصر</string>
+    <string name="is_downloading">%1$s قيد التنزيل</string>
+    <string name="download_failed">فشل تنزيل %1$s</string>
+    <string name="download_canceled">تم إلغاء تنزيل %1$s</string>
+    <string name="is_downloaded">%1$s تم تنزيله</string>
+    <string name="loading_the_file">يتم تحميل الملف</string>
+    <string name="signup">تسجيل جديد</string>
+    <string name="login">تسجيل الدخول</string>
+    <string name="pages">%1$s صفحة</string>
 
-    <string name="filter_by">فلتر بواسطة</string>
+    <array name="filter_spinner">
+        <item>تم شراؤه</item>
+        <item>الجامعة</item>
+        <item>الكلية</item>
+        <item>الصف</item>
+        <item>المادة</item>
+    </array>
+
+    <array name="langs">
+        <item>العربية</item>
+        <item>English</item>
+    </array>
 
 </resources>

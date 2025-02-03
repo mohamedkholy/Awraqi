@@ -2,19 +2,30 @@ package com.example.waraq.util
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
+import kotlinx.coroutines.flow.first
+
 
 object LanguagePreference {
-    private const val KEY_LANGUAGE = "language"
+    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = Constants.DATA_STORE_LANGUAGE)
+    private val languageKey = stringPreferencesKey("language")
 
-    fun saveLanguage(context: Context, language: String) {
-        val prefs: SharedPreferences =
-            context.getSharedPreferences(Constants.DEFAULT_SHARED_PREFERENCES, Context.MODE_PRIVATE)
-        prefs.edit().putString(KEY_LANGUAGE, language).apply()
+
+
+    suspend fun saveLanguage(context: Context, language: String) {
+        context.dataStore.edit { dataStore->
+            dataStore[languageKey] = language
+        }
     }
 
-    fun getLanguage(context: Context): String? {
-        val prefs: SharedPreferences =
-            context.getSharedPreferences(Constants.DEFAULT_SHARED_PREFERENCES, Context.MODE_PRIVATE)
-        return prefs.getString(KEY_LANGUAGE, null)
+    suspend fun getLanguage(context: Context): String? {
+       context.dataStore.data.first().apply {
+           return this[languageKey]
+       }
     }
+
 }

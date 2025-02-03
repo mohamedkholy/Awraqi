@@ -2,7 +2,10 @@ package com.example.waraq.util
 
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties.*
+import java.io.BufferedInputStream
+import java.io.BufferedOutputStream
 import java.io.ByteArrayInputStream
+import java.io.DataInputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
@@ -53,7 +56,7 @@ class CryptoManager {
         outStream.use { out ->
             out.write(cipher.iv.size)
             out.write(cipher.iv)
-            val buffer = ByteArray(8192)
+            val buffer = ByteArray(8192 * 8)
             val fileInputStream = FileInputStream(file)
             var bytesRead: Int
             CipherOutputStream(out, cipher).use { cipherOutputStream ->
@@ -67,22 +70,29 @@ class CryptoManager {
         file.delete()
     }
 
-    fun decryptFile(inputStream: InputStream,outStream: OutputStream) {
-        inputStream.use { inStream ->
-            val ivSize = inStream.read()
-            val iv = ByteArray(ivSize)
-            inStream.read(iv)
-            val cipher = decryptCipher(iv)
-            val buffer = ByteArray(8192)
-            var bytesRead: Int
-            CipherInputStream(inStream, cipher).use {cInStream->
-                while (cInStream.read(buffer).apply { bytesRead = this }!= -1)
-                {
-                    outStream.write(buffer,0,bytesRead)
+    fun decryptFile(inputStream: InputStream, outputStream: OutputStream) {
+        outputStream.use { outStream ->
+            inputStream.use { inStream ->
+                val ivSize = inStream.read()
+                val iv = ByteArray(ivSize)
+                DataInputStream(inStream).readFully(iv)
+                val cipher = decryptCipher(iv)
+
+                val buffer = ByteArray(8192 * 8)
+                var bytesRead: Int
+
+                while (inStream.read(buffer).also { bytesRead = it } != -1) {
+                    val decrypted = cipher.update(buffer, 0, bytesRead)
+                    if (decrypted != null) {
+                        outStream.write(decrypted)
+                    }
+                }
+
+                val decryptedFinal = cipher.doFinal()
+                if (decryptedFinal != null) {
+                    outStream.write(decryptedFinal)
                 }
             }
-
-
         }
     }
 

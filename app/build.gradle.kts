@@ -96,4 +96,13 @@ dependencies {
     //glide
     implementation (libs.glide)
 
+    //DataStore
+    implementation(libs.androidx.datastore.preferences)
+
+    //swiperefreshlayout
+    implementation(libs.androidx.swiperefreshlayout)
+
+    implementation ("net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:3.0.0-RC2")
+
+
 }

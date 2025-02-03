@@ -13,13 +13,22 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.waraq.R
 import com.example.waraq.data.ItemsFilter
 import com.example.waraq.databinding.FragmentUserHomeBinding
+import com.example.waraq.util.LanguagePreference
 import com.example.waraq.viewModels.ItemsViewModel
+import kotlinx.coroutines.runBlocking
 
 
 class UserHomeFragment : BaseFragment<FragmentUserHomeBinding>(R.layout.fragment_user_home) {
 
     private val viewModel by activityViewModels<ItemsViewModel>()
     private lateinit var searchView: SearchView
+    private val translations: HashMap<String, String> = hashMapOf(
+        "تم شراؤه" to "Purchased",
+        "الجامعة" to "University",
+        "الكلية" to "Faculty",
+        "الصف" to "Grade",
+        "المادة" to "Subject"
+    )
 
     override fun setup() {
         setSpinnerAdapter()
@@ -48,8 +57,15 @@ class UserHomeFragment : BaseFragment<FragmentUserHomeBinding>(R.layout.fragment
                         id: Long
                     ) {
                         view?.apply {
+                            var filter =(this as TextView).text.toString()
+                            runBlocking {
+                                if(LanguagePreference.getLanguage(requireContext())=="ar")
+                                {
+                                    filter = translations[filter]!!
+                                }
+                            }
                             viewModel.itemsFilter.postValue(
-                                ItemsFilter.valueOf((this as TextView).text.toString().uppercase())
+                                ItemsFilter.valueOf(filter.uppercase())
                             )
                         }
                     }
