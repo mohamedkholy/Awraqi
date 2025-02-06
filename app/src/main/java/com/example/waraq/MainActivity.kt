@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
-import android.preference.PreferenceDataStore
 import android.view.Window
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
@@ -15,13 +14,8 @@ import androidx.lifecycle.lifecycleScope
 import com.example.waraq.data.ThemePreference
 import com.example.waraq.dataBase.MyDatabase
 import com.example.waraq.databinding.ActivityMainBinding
-import com.example.waraq.util.Constants
 import com.example.waraq.util.LanguagePreference
 import com.example.waraq.util.LocaleHelper
-import com.example.waraq.util.SecurityManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 

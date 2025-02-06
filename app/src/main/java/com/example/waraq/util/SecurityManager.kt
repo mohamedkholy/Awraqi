@@ -3,12 +3,8 @@ package com.example.waraq.util
 import android.content.Context
 import android.provider.Settings
 import android.util.Log
-import android.view.Window
-import android.view.WindowManager
 import android.widget.Toast
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+
 
 class SecurityManager {
 

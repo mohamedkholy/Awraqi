@@ -47,6 +47,7 @@ class DownloadItemService : Service() {
         return null
     }
 
+    @Suppress("DEPRECATION")
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
@@ -73,12 +74,13 @@ class DownloadItemService : Service() {
     }
 
 
+    @Suppress("BlockingMethodInNonBlockingContext")
     private suspend fun startDownload(item: PaperItem) {
         startForeground(
             abs(item.hashCode()) + 1, getNotification(
                 null,
                 getString(R.string.downloading_items),
-                item.title!!
+                item.title
             )
         )
         FirebaseDownload(this).downloadBook(item).collect { result ->

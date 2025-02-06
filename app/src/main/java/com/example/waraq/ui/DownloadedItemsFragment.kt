@@ -12,7 +12,6 @@ import com.example.waraq.data.DownloadState
 import com.example.waraq.data.ItemsFilter
 import com.example.waraq.data.ListItem
 import com.example.waraq.data.PaperItem
-import com.example.waraq.data.Purchased
 import com.example.waraq.databinding.FragmentDownloadedItemsBinding
 import com.example.waraq.viewModels.ItemsViewModel
 import com.google.android.flexbox.FlexDirection
@@ -21,16 +20,16 @@ import com.google.android.flexbox.JustifyContent
 import kotlinx.coroutines.launch
 
 
-
 class DownloadedItemsFragment :
     BaseFragment<FragmentDownloadedItemsBinding>(R.layout.fragment_downloaded_items),
-    ItemsAdapter.OnItemActionListener {
+    ItemsAdapter.OnItemClickListener, ItemsAdapter.OnDeleteClickListener {
 
     private var searchText = ""
     private val viewModel by activityViewModels<ItemsViewModel>()
     private lateinit var adapter: ItemsAdapter
     private var paperItemList = mutableListOf<PaperItem>()
     private var filter: ItemsFilter = ItemsFilter.PURCHASED
+    private lateinit var favoriteItems: List<String>
 
 
     override fun setup() {
@@ -39,16 +38,17 @@ class DownloadedItemsFragment :
 
 
     private suspend fun refreshPurchasedItems() {
-        val iDsList=viewModel.getUserBooksIds()
+        favoriteItems = viewModel.getFavoriteItems()
+        val iDsList = viewModel.getUserBooksIds()
         if (iDsList.isNotEmpty()) {
             paperItemList.forEach { item ->
-                if (iDsList.contains(item.id)&&item.isPurchased!=Purchased.PURCHASED){
-                    item.isPurchased = Purchased.PURCHASED
+                if (iDsList.contains(item.id) && !item.isPurchased) {
+                    item.isPurchased = true
                     viewModel.updateItem(item)
                 }
             }
         }
-        binding.swipeRefreshLayout.isRefreshing=false
+        binding.swipeRefreshLayout.isRefreshing = false
         refreshRecyclerView()
     }
 
@@ -59,7 +59,7 @@ class DownloadedItemsFragment :
 
         }
         binding.recv.layoutManager = layoutManager
-        adapter = ItemsAdapter(this)
+        adapter = ItemsAdapter(this, this)
         binding.recv.adapter = adapter
     }
 
@@ -83,14 +83,13 @@ class DownloadedItemsFragment :
         }
 
         viewModel.downloadedItemsLiveData.observe(viewLifecycleOwner) { newList ->
-            binding.noItemsLayout.visibility = if (newList.isEmpty()) View.VISIBLE else View.GONE
+            binding.noItems.visibility = if (newList.isEmpty()) View.VISIBLE else View.GONE
             paperItemList = newList.toMutableList()
             lifecycleScope.launch {
                 refreshPurchasedItems()
             }
             refreshRecyclerView()
         }
-
 
         viewModel.searchText.observe(viewLifecycleOwner) { searchText ->
             if (searchText != this@DownloadedItemsFragment.searchText) {
@@ -104,37 +103,47 @@ class DownloadedItemsFragment :
     private fun refreshRecyclerView() {
         if (filter == ItemsFilter.PURCHASED) {
             paperItemList =
-                paperItemList.sortedByDescending { it.isPurchased == Purchased.PURCHASED }
+                paperItemList.sortedByDescending { it.isPurchased }
                     .toMutableList()
         }
 
         val list =
-            paperItemList.filter { it.title!!.contains(searchText, ignoreCase = true) }.groupBy {
+            paperItemList.filter { it.title.contains(searchText, ignoreCase = true) }.groupBy {
                 when (filter) {
-                    ItemsFilter.PURCHASED -> it.isPurchased.toString()
+                    ItemsFilter.PURCHASED -> {
+                        if (it.isPurchased) "Purchased" else "Available"
+                    }
+
                     ItemsFilter.UNIVERSITY -> it.university
                     ItemsFilter.FACULTY -> it.faculty
                     ItemsFilter.GRADE -> it.grade
                     ItemsFilter.SUBJECT -> it.subject
+                    ItemsFilter.FAVORITES -> {
+                        if (favoriteItems.contains(it.id)) "Favorites" else "Non-favorite"
+                    }
                 }
             }.flatMap { (groupName, items) ->
-                listOf(ListItem.Header(groupName!!)) + items.map { ListItem.Item(it) }
+                listOf(ListItem.Header(groupName)) + items.map { ListItem.Item(it) }
             }
 
         adapter.submitList(list)
     }
 
-
     override fun onClick(paperItem: PaperItem) {
         if (paperItem.downloadState != DownloadState.notDownloded) {
-            val action = UserHomeFragmentDirections.actionUserHomeFragmentToPdfFragment(
-                paperItem
-            )
+            val action =
+                UserHomeFragmentDirections.actionUserHomeFragmentToStoreItemsDetailsFragment(
+                    paperItem
+                )
             val navHostFragment =
                 requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment_container) as NavHostFragment
             val navController = navHostFragment.findNavController()
             navController.navigate(action)
 
         }
+    }
+
+    override fun onDelete(item: PaperItem) {
+        viewModel.deleteItem(item)
     }
 }

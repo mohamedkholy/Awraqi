@@ -1,5 +1,5 @@
 package com.example.waraq.data
 
 enum class ItemsFilter {
-    PURCHASED,UNIVERSITY,FACULTY,GRADE,SUBJECT
+    PURCHASED,FAVORITES,UNIVERSITY,FACULTY,GRADE,SUBJECT
 }

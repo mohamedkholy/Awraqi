@@ -18,13 +18,6 @@
             app:popEnterAnim="@anim/fade_in"
             app:popExitAnim="@anim/slide_out" />
         <action
-            android:id="@+id/action_userHomeFragment_to_pdfFragment"
-            app:destination="@id/pdfFragment"
-            app:enterAnim="@anim/slide_in"
-            app:exitAnim="@anim/fade_out"
-            app:popEnterAnim="@anim/fade_in"
-            app:popExitAnim="@anim/slide_out" />
-        <action
             android:id="@+id/action_userHomeFragment_to_settingFragment"
             app:destination="@id/settingFragment" />
     </fragment>
@@ -63,7 +56,14 @@
     <fragment
         android:id="@+id/loginSignupFragment"
         android:name="com.example.waraq.ui.LoginSignupFragment"
-        android:label="LoginSignupFragment" />
+        android:label="LoginSignupFragment" >
+        <action
+            android:id="@+id/action_loginSignupFragment_to_forgetPasswordFragment"
+            app:destination="@id/forgetPasswordFragment" />
+        <action
+            android:id="@+id/action_loginSignupFragment_to_adminHomeFragment"
+            app:destination="@id/adminHomeFragment" />
+    </fragment>
     <fragment
         android:id="@+id/settingFragment"
         android:name="com.example.waraq.ui.SettingFragment"
@@ -79,5 +79,28 @@
         android:id="@+id/preferencesFragment"
         android:name="com.example.waraq.ui.PreferencesFragment"
         android:label="PreferencesFragment" />
+    <fragment
+        android:id="@+id/forgetPasswordFragment"
+        android:name="com.example.waraq.ui.ForgetPasswordFragment"
+        android:label="ForgetPasswordFragment" />
+    <fragment
+        android:id="@+id/adminHomeFragment"
+        android:name="com.example.waraq.ui.AdminHomeFragment"
+        android:label="AdminHomeFragment" >
+        <action
+            android:id="@+id/action_adminHomeFragment_to_addItemFragment"
+            app:destination="@id/addItemFragment" />
+        <action
+            android:id="@+id/action_adminHomeFragment_to_assignItemFragment"
+            app:destination="@id/assignItemFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addItemFragment"
+        android:name="com.example.waraq.ui.AddItemFragment"
+        android:label="AddItemFragment" />
+    <fragment
+        android:id="@+id/assignItemFragment"
+        android:name="com.example.waraq.ui.AssignItemFragment"
+        android:label="AssignItemFragment" />
 
 </navigation>

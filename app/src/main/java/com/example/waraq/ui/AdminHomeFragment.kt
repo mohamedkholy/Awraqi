@@ -1,5 +1,6 @@
 package com.example.waraq.ui
 
+import androidx.navigation.fragment.findNavController
 import com.example.waraq.R
 import com.example.waraq.databinding.FragmentAdminHomeBinding
 
@@ -13,6 +14,17 @@ class AdminHomeFragment : BaseFragment<FragmentAdminHomeBinding>(R.layout.fragme
 
     override fun addCallbacks() {
 
+        binding.backButton.setOnClickListener {
+            findNavController().popBackStack()
+        }
+
+      binding.addItemButton.setOnClickListener {
+          findNavController().navigate(R.id.addItemFragment)
+      }
+
+        binding.assignItemButton.setOnClickListener {
+            findNavController().navigate(R.id.assignItemFragment)
+        }
     }
 
 }

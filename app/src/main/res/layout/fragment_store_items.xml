@@ -17,7 +17,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginHorizontal="@dimen/_15sdp"
-            android:layout_marginVertical="@dimen/_20sdp">
+            android:layout_marginVertical="@dimen/_20sdp"
+            >
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recv"

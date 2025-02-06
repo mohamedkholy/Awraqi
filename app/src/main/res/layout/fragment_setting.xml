@@ -15,8 +15,7 @@
             android:layout_margin="@dimen/_12sdp"
             android:src="@drawable/baseline_arrow_back"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/dark_gray" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -25,7 +24,7 @@
             app:layout_constraintStart_toEndOf="@id/back_button"
             app:layout_constraintTop_toTopOf="@id/back_button"
             app:layout_constraintBottom_toBottomOf="@id/back_button"
-            android:textColor="@color/black"
+            android:textColor="@color/primary_color"
             android:layout_marginStart="@dimen/_10sdp"
             android:textSize="@dimen/_12ssp"
             />
@@ -50,7 +49,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="@dimen/_1sdp"
-            android:background="@color/gray"
+            android:background="@color/primary_color"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/signIn" />
 
@@ -75,7 +74,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="@dimen/_1sdp"
-            android:background="@color/gray"
+            android:background="@color/primary_color"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/preferences" />
 

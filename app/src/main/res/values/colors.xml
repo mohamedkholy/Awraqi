@@ -7,7 +7,7 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="primary_color">#313542</color>
+    <color name="primary_color">#D4A157</color>
     <color name="light_blue">#1B64D2</color>
     <color name="sky_color">#258BBE</color>
     <color name="light_gray">#D7D0D8</color>
@@ -15,6 +15,8 @@
     <color name="gray2">#606060</color>
     <color name="dark_gray">#373945</color>
     <color name="yellow">#FDCE00</color>
+    <color name="light_primary">#EADAB8</color>
+    <color name="test">#B98A47</color>
 
     <color name="material_light_primary_text">#DE000000</color>
     <color name="material_light_hint_text">#61000000</color>

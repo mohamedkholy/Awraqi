@@ -29,8 +29,8 @@ class FirebaseDownload(val context: Context) {
         item = paperItem
         saveItem(DownloadState.downloading)
 
-        val fileReference = firebaseStorage.getReferenceFromUrl(paperItem.url!!)
-        cacheFile = File.createTempFile("temp file", paperItem.title.toString(), context.cacheDir)
+        val fileReference = firebaseStorage.getReferenceFromUrl(paperItem.url)
+        cacheFile = File.createTempFile("temp file", paperItem.title, context.cacheDir)
         val downloadTask = fileReference.getFile(cacheFile)
 
 
@@ -57,8 +57,8 @@ class FirebaseDownload(val context: Context) {
     }.flowOn(Dispatchers.IO)
 
     private fun addDownloadTask(downloadTask: FileDownloadTask, producerScope: ProducerScope<Any>) {
-        val coverReference = firebaseStorage.getReferenceFromUrl(item.coverUrl!!)
-        val coverFile = File(context.filesDir, item.title.toString() + "-cover")
+        val coverReference = firebaseStorage.getReferenceFromUrl(item.coverUrl)
+        val coverFile = File(context.filesDir, item.title + "-cover")
 
         producerScope.apply {
             downloadTask.apply {

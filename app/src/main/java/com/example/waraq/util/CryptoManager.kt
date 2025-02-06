@@ -2,9 +2,6 @@ package com.example.waraq.util
 
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties.*
-import java.io.BufferedInputStream
-import java.io.BufferedOutputStream
-import java.io.ByteArrayInputStream
 import java.io.DataInputStream
 import java.io.File
 import java.io.FileInputStream
@@ -12,7 +9,6 @@ import java.io.InputStream
 import java.io.OutputStream
 import java.security.KeyStore
 import javax.crypto.Cipher
-import javax.crypto.CipherInputStream
 import javax.crypto.CipherOutputStream
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey

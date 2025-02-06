@@ -23,7 +23,7 @@
     <string name="settings">Settings</string>
     <string name="sign_in">Sign in</string>
     <string name="support">Support</string>
-    <string name="buy">Buy</string>
+    <string name="buy">Buy now</string>
     <string name="download_preview">Download preview</string>
     <string name="home">Home</string>
     <string name="cancel_download">Cancel download %1$s</string>
@@ -43,9 +43,23 @@
     <string name="signup">Signup</string>
     <string name="login">Login</string>
     <string name="pages">%1$s pages</string>
+    <string name="university"><font color='#D4A157'>University: </font> </string>
+    <string name="faculty"><font color='#D4A157'>faculty: </font> </string>
+    <string name="subject"><font color='#D4A157'>Subject: </font> </string>
+    <string name="pages_preview"><font color='#D4A157'>Pages: </font> </string>
+    <string name="author"><font color='#D4A157'>Author: </font> </string>
+    <string name="price">%1$s EGP</string>
+    <string name="send">Send</string>
+    <string name="password_reset">Password Reset</string>
+    <string name="reset_email_was_sent_successfully">Reset email was sent successfully</string>
+    <string name="failed">Failed</string>
+    <string name="limited_access">Limited access</string>
+    <string name="delete">delete</string>
+    <string name="no_internet_connection">No internet connection</string>
 
     <array name="filter_spinner">
         <item>purchased</item>
+        <item>favorites</item>
         <item>university</item>
         <item>faculty</item>
         <item>grade</item>
@@ -53,8 +67,31 @@
     </array>
 
     <array name="langs">
-        <item>Arabic</item>
         <item>English</item>
+        <item>Arabic</item>
     </array>
+
+    <array name="grade">
+        <item>first grade</item>
+        <item>second grade</item>
+        <item>third grade</item>
+        <item>forth grade</item>
+        <item>fifth grade</item>
+    </array>
+
+    <array name="semester">
+        <item>first semester</item>
+        <item>second semester</item>
+    </array>
+
+    <array name="university">
+        <item>Tanta University</item>
+    </array>
+
+    <array name="faculty">
+        <item>Medicine</item>
+    </array>
+
+
 
 </resources>

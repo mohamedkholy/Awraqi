@@ -1,6 +1,5 @@
 package com.example.waraq.ui
 
-import android.content.Context
 import android.content.Intent
 import android.view.View
 import android.widget.AdapterView
@@ -15,10 +14,9 @@ import com.example.waraq.data.Languages
 import com.example.waraq.data.ThemePreference
 import com.example.waraq.databinding.FragmentPreferencesBinding
 import com.example.waraq.util.LanguagePreference
-import com.example.waraq.util.LocaleHelper
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import java.util.Locale
 
 
 class PreferencesFragment :
@@ -27,10 +25,13 @@ class PreferencesFragment :
 
     override fun setup() {
         runBlocking {
-            val lang = LanguagePreference.getLanguage(requireContext())
-            lang?.apply {
-                binding.langSpinner.setSelection(if (lang == "en") 1 else 0)
+            var lang = LanguagePreference.getLanguage(requireContext())
+            if (lang==null){
+                 lang =Locale.getDefault().language
             }
+
+                binding.langSpinner.setSelection(if (lang == "en") 0 else 1)
+
         }
     }
 
@@ -45,7 +46,7 @@ class PreferencesFragment :
                     isChecked = true
             }
             post {
-                setOnCheckedChangeListener { compoundButton: CompoundButton, b: Boolean ->
+                setOnCheckedChangeListener { _: CompoundButton, b: Boolean ->
                     lifecycleScope.launch {
                         ThemePreference.setNightMode(requireContext(), b)
                         restartApp()

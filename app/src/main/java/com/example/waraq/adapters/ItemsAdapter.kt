@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
@@ -19,7 +20,10 @@ import java.io.File
 import java.net.URL
 
 
-class ItemsAdapter(val listener: OnItemActionListener) :
+class ItemsAdapter(
+    val ClickListener: OnItemClickListener,
+    val deleteListener: OnDeleteClickListener? = null,
+) :
     RecyclerView.Adapter<ViewHolder>() {
 
     companion object {
@@ -31,11 +35,11 @@ class ItemsAdapter(val listener: OnItemActionListener) :
             DiffUtil.ItemCallback<ListItem>() {
 
             override fun areItemsTheSame(oldItem: ListItem, newItem: ListItem): Boolean {
-                return false
+                return newItem == oldItem
             }
 
             override fun areContentsTheSame(oldItem: ListItem, newItem: ListItem): Boolean {
-                return false
+                return newItem == oldItem
             }
         }
     }
@@ -69,24 +73,38 @@ class ItemsAdapter(val listener: OnItemActionListener) :
             is MyItemHolder -> {
                 val item = (differ.currentList[holder.adapterPosition] as ListItem.Item).data
 
-                if (item.downloadState == DownloadState.downloaded){
+                if (item.downloadState == DownloadState.downloaded) {
                     Glide.with(holder.view.context)
                         .load(File(holder.view.context.filesDir, item.title + "-cover"))
                         .into(holder.image)
-                }
-                else {
-                    val circularProgressDrawable = CircularProgressDrawable(holder.view.context).apply {
-                        strokeWidth = 5f
-                        centerRadius = 30f
-                        start()
-                    }
+                   deleteListener?.let {
+                       holder.options.apply {
+                           visibility = View.VISIBLE
+                           setOnClickListener {
+                               val menu = PopupMenu(holder.view.context, this@apply)
+                               menu.inflate(R.menu.delete_item_menu)
+                               menu.setOnMenuItemClickListener {
+                                   deleteListener.onDelete(item)
+                                   true
+                               }
+                               menu.show()
+                           }
+                       }
+                   }
+                } else {
+                    val circularProgressDrawable =
+                        CircularProgressDrawable(holder.view.context).apply {
+                            strokeWidth = 5f
+                            centerRadius = 30f
+                            start()
+                        }
                     Glide.with(holder.view.context).load(URL(item.coverUrl.toString()))
                         .placeholder(circularProgressDrawable).into(holder.image)
                 }
 
                 holder.textView.text = item.title
                 holder.view.setOnClickListener {
-                    listener.onClick(item)
+                    ClickListener.onClick(item)
                 }
             }
 
@@ -99,13 +117,10 @@ class ItemsAdapter(val listener: OnItemActionListener) :
         }
     }
 
-    interface OnItemActionListener {
-        fun onClick(paperItem: PaperItem)
-    }
-
     class MyItemHolder(val view: View) : ViewHolder(view) {
         val image: ImageView = view.findViewById(R.id.item_cover)
         val textView: TextView = view.findViewById(R.id.item_title)
+        val options: ImageView = view.findViewById(R.id.options)
     }
 
     class MyHeaderHolder(val view: View) : ViewHolder(view) {
@@ -122,4 +137,14 @@ class ItemsAdapter(val listener: OnItemActionListener) :
     fun submitList(newList: List<ListItem>) {
         differ.submitList(newList)
     }
+
+
+    interface OnItemClickListener {
+        fun onClick(paperItem: PaperItem)
+    }
+
+    interface OnDeleteClickListener {
+        fun onDelete(item: PaperItem)
+    }
+
 }

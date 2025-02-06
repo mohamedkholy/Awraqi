@@ -6,8 +6,6 @@ import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 import com.example.waraq.util.Constants
-import com.example.waraq.util.LanguagePreference
-import com.example.waraq.util.LocaleHelper
 
 class MyApp : Application() {
 

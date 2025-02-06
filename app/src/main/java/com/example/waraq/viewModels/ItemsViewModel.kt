@@ -13,7 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ItemsViewModel(private val application: Application): AndroidViewModel(application) {
+class ItemsViewModel(application: Application): AndroidViewModel(application) {
 
     private val repository= MyRepository(getAppContext())
     private val _storeItemsLiveData = MutableLiveData<List<PaperItem>>()
@@ -53,6 +53,19 @@ class ItemsViewModel(private val application: Application): AndroidViewModel(app
         return getApplication<Application>().applicationContext
     }
 
+    fun getFavoriteItems(): List<String> {
+       return repository.getFavoriteItems()
+    }
+
+     suspend fun saveFavoriteItems(email: String): Boolean {
+         return repository.saveFavoriteItems(email)
+    }
+
+    fun deleteItem(item: PaperItem) {
+         viewModelScope.launch {
+             repository.deleteItem(item)
+         }
+    }
 
 
     init {

@@ -1,6 +1,6 @@
 package com.example.waraq.ui
 
-import android.view.View
+
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
@@ -11,7 +11,6 @@ import com.example.waraq.data.ItemsFilter
 import com.example.waraq.data.ListItem
 import com.example.waraq.databinding.FragmentStoreItemsBinding
 import com.example.waraq.data.PaperItem
-import com.example.waraq.data.Purchased
 import com.example.waraq.util.ConnectivityObserver
 import com.example.waraq.util.ConnectivityObserver.ConnectionStatus
 import com.example.waraq.viewModels.ItemsViewModel
@@ -20,11 +19,10 @@ import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 
 class StoreItemsFragment : BaseFragment<FragmentStoreItemsBinding>(R.layout.fragment_store_items),
-    ItemsAdapter.OnItemActionListener {
+    ItemsAdapter.OnItemClickListener {
 
     private val viewModel by activityViewModels<ItemsViewModel>()
     private var paperItemList = mutableListOf<PaperItem>()
@@ -33,14 +31,16 @@ class StoreItemsFragment : BaseFragment<FragmentStoreItemsBinding>(R.layout.frag
     private var searchText = ""
     private var connectionStatus: ConnectionStatus = ConnectionStatus.Unavailable
     private lateinit var connectionStatusSnackBar:Snackbar
+    private lateinit var favoriteItems:List<String>
 
 
     override fun setup() {
+        favoriteItems = viewModel.getFavoriteItems()
         binding.swipeRefreshLayout.isRefreshing = true
         connectionStatusSnackBar = Snackbar.make(
             requireContext(),
             binding.recv,
-            "No internet connection",
+            getString(R.string.no_internet_connection),
             Snackbar.LENGTH_INDEFINITE
         )
         setConnectionStatus()
@@ -100,7 +100,6 @@ class StoreItemsFragment : BaseFragment<FragmentStoreItemsBinding>(R.layout.frag
     private fun setConnectionStatus() {
         lifecycleScope.launch {
             ConnectivityObserver(requireContext()).connectionObserver.collect { status ->
-                println(status)
                 if (status == ConnectionStatus.Unavailable) {
                     showNoConnectionSnackBar(true)
                 }
@@ -117,21 +116,32 @@ class StoreItemsFragment : BaseFragment<FragmentStoreItemsBinding>(R.layout.frag
     private fun refreshRecyclerView() {
         if (filter == ItemsFilter.PURCHASED) {
             paperItemList =
-                paperItemList.sortedByDescending { it.isPurchased == Purchased.PURCHASED }
+                paperItemList.sortedByDescending { it.isPurchased }
                     .toMutableList()
         }
 
         val list =
-            paperItemList.filter { it.title!!.contains(searchText, ignoreCase = true) }.groupBy {
+            paperItemList.filter { it.title.contains(searchText, ignoreCase = true) }.groupBy {
                 when (filter) {
-                    ItemsFilter.PURCHASED -> it.isPurchased.toString()
+                    ItemsFilter.PURCHASED -> {
+                        if(it.isPurchased)
+                            "Purchased"
+                        else
+                            "Available"
+                    }
                     ItemsFilter.UNIVERSITY -> it.university
                     ItemsFilter.FACULTY -> it.faculty
                     ItemsFilter.GRADE -> it.grade
                     ItemsFilter.SUBJECT -> it.subject
+                    ItemsFilter.FAVORITES -> {
+                        if (favoriteItems.contains(it.id))
+                            "Favorites"
+                        else
+                            "Non-favorite"
+                    }
                 }
             }.flatMap { (groupName, items) ->
-                listOf(ListItem.Header(groupName!!)) + items.map { ListItem.Item(it) }
+                listOf(ListItem.Header(groupName)) + items.map { ListItem.Item(it) }
             }
 
 

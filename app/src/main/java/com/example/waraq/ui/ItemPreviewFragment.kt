@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.util.Log
 import android.view.View
+import android.widget.CompoundButton
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -17,15 +18,11 @@ import com.example.waraq.R
 import com.example.waraq.adapters.ItemsAdapter
 import com.example.waraq.data.DownloadState
 import com.example.waraq.data.PaperItem
-import com.example.waraq.data.Purchased
 import com.example.waraq.databinding.FragmentItemPreviewBinding
 import com.example.waraq.util.ConnectivityObserver
 import com.example.waraq.util.ConnectivityObserver.ConnectionStatus
 import com.example.waraq.util.Constants
 import com.example.waraq.viewModels.ItemPreviewViewModel
-import com.google.android.flexbox.FlexDirection
-import com.google.android.flexbox.FlexboxLayoutManager
-import com.google.android.flexbox.JustifyContent
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -35,9 +32,9 @@ import java.net.URL
 
 class ItemPreviewFragment :
     BaseFragment<FragmentItemPreviewBinding>(R.layout.fragment_item_preview),
-    ItemsAdapter.OnItemActionListener {
+    ItemsAdapter.OnItemClickListener {
 
-    private var receiver: BroadcastReceiver?=null
+    private var receiver: BroadcastReceiver? = null
     private val args: ItemPreviewFragmentArgs by navArgs()
     private val item: PaperItem by lazy {
         args.item
@@ -49,28 +46,28 @@ class ItemPreviewFragment :
     override fun setup() {
         connectionStatusSnackBar = Snackbar.make(
             requireContext(),
-            binding.recv,
-            "No internet connection",
+            binding.root,
+            getString(R.string.no_internet_connection),
             Snackbar.LENGTH_INDEFINITE
         )
 
-
+        setFavorite()
         setConnectionStatus()
-        setRecyclerManager()
         setItemData()
-        binding.downloadButton.text =
-            if (item.isPurchased == Purchased.PURCHASED) "Download" else "Download preview"
         viewModel.getItemDownloadState(item.id).observe(viewLifecycleOwner) { downloadState ->
             item.downloadState = when (downloadState) {
                 DownloadState.downloaded -> {
+                    binding.buyButton.visibility = if (item.isPurchased) {
+                        View.GONE
+                    } else View.VISIBLE
                     binding.downloadButton.apply {
-                        isEnabled = true
                         text = context.getString(R.string.open)
                     }
                     DownloadState.downloaded
                 }
 
                 DownloadState.downloading -> {
+                    binding.buyButton.visibility = View.GONE
                     binding.downloadButton.text =
                         requireContext().getString(R.string.cancel_download, "")
                     registerDownloadProgressReceiver()
@@ -78,10 +75,12 @@ class ItemPreviewFragment :
                 }
 
                 else -> {
+                    binding.buyButton.visibility = if (item.isPurchased) {
+                        View.GONE
+                    } else View.VISIBLE
                     binding.downloadButton.apply {
-                        isEnabled = true
                         text =
-                            if (item.isPurchased == Purchased.PURCHASED) context.getString(R.string.download) else context.getString(
+                            if (item.isPurchased) context.getString(R.string.download) else context.getString(
                                 R.string.download_preview
                             )
                     }
@@ -89,20 +88,25 @@ class ItemPreviewFragment :
                 }
             }
         }
-        if (item.isPurchased == Purchased.PURCHASED) {
-            binding.buyButton.visibility = View.GONE
-        }
+        binding.buyButton.visibility = if (item.isPurchased) {
+            View.GONE
+        } else View.VISIBLE
 
+    }
+
+    private fun setFavorite() {
+        if (viewModel.isFavorite(item.id))
+            binding.favouritesButton.isChecked = true
     }
 
 
     private fun registerDownloadProgressReceiver() {
-         receiver = object : BroadcastReceiver() {
+        receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, p1: Intent?) {
                 println("receive")
                 val bundle = p1?.extras
                 val progress = bundle?.getInt(Constants.DOWNLOAD_PROGRESS_KEY)
-                if (progress != null && context != null&&item.downloadState==DownloadState.downloading) {
+                if (progress != null && context != null && item.downloadState == DownloadState.downloading) {
                     binding.downloadButton.text =
                         context.getString(R.string.cancel_download, "$progress%")
                 }
@@ -131,14 +135,8 @@ class ItemPreviewFragment :
         }
     }
 
-    private fun setRecyclerManager() {
-        val layoutManager = FlexboxLayoutManager(context).apply {
-            flexDirection = FlexDirection.ROW
-            justifyContent = JustifyContent.SPACE_AROUND
-        }
-        binding.recv.layoutManager = layoutManager
-    }
 
+    @Suppress("DEPRECATION")
     private fun setItemData() {
         val circularProgressDrawable = CircularProgressDrawable(requireContext()).apply {
             strokeWidth = 5f
@@ -147,15 +145,32 @@ class ItemPreviewFragment :
         }
         Glide.with(requireContext()).load(URL(item.coverUrl)).placeholder(circularProgressDrawable)
             .into(binding.itemCoverImageView)
-        binding.authorTitle.text = item.author
-        binding.itemTitle.text = item.title
-        binding.faculty.text = item.faculty
-        binding.subject.text = item.subject
-        binding.university.text = item.university
-        binding.pagesCount.text = getString(R.string.pages, item.pages)
+
+        binding.itemTitle.text=item.title
+        binding.authorTitle.append(item.author)
+        binding.faculty.append(item.faculty)
+        binding.subject.append(item.subject)
+        binding.university.append(item.university)
+        binding.pagesCount.append(getString(R.string.pages, item.pages))
+        binding.price.text = getString(R.string.price, item.price)
     }
 
     override fun addCallbacks() {
+
+
+        binding.favouritesButton.apply {
+            lifecycleScope.launch {
+                post {
+                    setOnCheckedChangeListener { _: CompoundButton, isChecked: Boolean ->
+                        if (isChecked) {
+                            viewModel.addFavoriteItem(item.id)
+                        } else {
+                            viewModel.removeFavoriteItem(item.id)
+                        }
+                    }
+                }
+            }
+        }
 
         binding.backButton.setOnClickListener {
             findNavController().popBackStack()
@@ -167,7 +182,7 @@ class ItemPreviewFragment :
                     ItemPreviewFragmentDirections.actionStoreItemsDetailsFragmentToLoginSignupFragment()
                 findNavController().navigate(action)
             } else {
-
+                   //todo
             }
         }
 
@@ -208,9 +223,8 @@ class ItemPreviewFragment :
         receiver?.let {
             try {
                 requireContext().unregisterReceiver(receiver)
-            }
-            catch (e:IllegalArgumentException){
-                Log.e("error",e.message.toString())
+            } catch (e: IllegalArgumentException) {
+                Log.e("error", e.message.toString())
             }
         }
         super.onDestroy()

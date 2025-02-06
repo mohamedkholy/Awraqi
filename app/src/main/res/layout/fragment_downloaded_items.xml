@@ -26,31 +26,20 @@
                 tools:listitem="@layout/paper_list_item" />
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-        <LinearLayout
-            android:id="@+id/no_items_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:orientation="vertical"
+        <TextView
+            android:id="@+id/no_items"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_items_here_yet"
+            android:textColor="@color/primary_color"
             android:visibility="invisible"
-            >
-
-            <ImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@drawable/baseline_auto_stories"
-                app:tint="@color/gray" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/no_items_here_yet"
-                android:textColor="@color/gray"
-                />
-
-
-
-        </LinearLayout>
+            android:gravity="center"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:drawableTint="@color/primary_color"
+            app:drawableTopCompat="@drawable/baseline_auto_stories" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

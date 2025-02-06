@@ -9,16 +9,15 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#FCFCFC"
-        >
+        android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/_15sdp"
-            tools:context=".ui.ItemPreviewFragment">
+            android:padding="@dimen/_12sdp"
+            tools:context=".ui.ItemPreviewFragment"
+            android:background="@drawable/item_preview_background"
+            >
 
             <ImageView
                 android:id="@+id/back_button"
@@ -27,7 +26,18 @@
                 android:src="@drawable/baseline_arrow_back"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:tint="@color/dark_gray" />
+                app:layout_constraintBottom_toBottomOf="@id/favourites_button"
+                />
+
+            <CheckBox
+                android:id="@+id/favourites_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@drawable/favorite_button_selector"
+                android:buttonTint="@color/primary_color"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/dark_gray"/>
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/item_cover_card"
@@ -35,98 +45,106 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_20sdp"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:cardCornerRadius="@dimen/_10sdp"
                 app:layout_constraintTop_toBottomOf="@id/back_button">
 
                 <ImageView
                     android:id="@+id/item_cover_image_view"
-                    android:layout_width="@dimen/_100sdp"
-                    android:layout_height="@dimen/_150sdp"
-                    android:scaleType="centerCrop"
-                    />
+                    android:layout_width="@dimen/_150sdp"
+                    android:layout_height="@dimen/_200sdp"
+                    android:scaleType="centerCrop" />
 
             </androidx.cardview.widget.CardView>
 
-
             <TextView
-                android:id="@+id/item_title"
-                android:layout_width="wrap_content"
+                android:id="@+id/price"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_12sdp"
-                android:text="The Art Of War"
-                android:textColor="@color/dark_gray"
-                app:layout_constraintStart_toEndOf="@id/item_cover_card"
-                app:layout_constraintTop_toTopOf="@id/item_cover_card" />
+                android:text="40 EGP"
+                android:textSize="@dimen/_15sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/items_details"
+                android:gravity="end"
+                android:textColor="@color/primary_color"
+                app:layout_constraintWidth_percent="0.2"
+                />
 
-            <TextView
-                android:id="@+id/author_title"
-                android:layout_width="wrap_content"
+
+            <LinearLayout
+                android:id="@+id/items_details"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="@dimen/_8sdp"
-                android:layout_marginStart="@dimen/_12sdp"
-                android:text="Author: Mohamed El-kholy"
-                android:textColor="@color/gray"
-                android:textSize="@dimen/_10ssp"
-                app:layout_constraintStart_toEndOf="@id/item_cover_card"
-                app:layout_constraintTop_toBottomOf="@id/item_title" />
-
-            <TextView
-                android:id="@+id/university"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginVertical="@dimen/_8sdp"
-                android:layout_marginStart="@dimen/_12sdp"
-                android:text="University: Tanta"
-                android:textColor="@color/gray"
-                android:textSize="@dimen/_10ssp"
-                app:layout_constraintStart_toEndOf="@id/item_cover_card"
-                app:layout_constraintTop_toBottomOf="@id/author_title" />
-
-            <TextView
-                android:id="@+id/faculty"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginVertical="@dimen/_8sdp"
-                android:layout_marginStart="@dimen/_12sdp"
-                android:text="Faculty: medicine"
-                android:textColor="@color/gray"
-                android:textSize="@dimen/_10ssp"
-                app:layout_constraintStart_toEndOf="@id/item_cover_card"
-                app:layout_constraintTop_toBottomOf="@id/university" />
-
-            <TextView
-                android:id="@+id/subject"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginVertical="@dimen/_8sdp"
-                android:layout_marginStart="@dimen/_12sdp"
-                android:text="Subject: anatomy"
-                android:textColor="@color/gray"
-                android:textSize="@dimen/_10ssp"
-                app:layout_constraintStart_toEndOf="@id/item_cover_card"
-                app:layout_constraintTop_toBottomOf="@id/faculty" />
-
-
-            <TextView
-                android:id="@+id/pages_count"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginVertical="@dimen/_8sdp"
-                android:layout_marginStart="@dimen/_12sdp"
-                android:text="Pages: 52"
-                android:textColor="@color/gray"
-                android:textSize="@dimen/_10ssp"
-                app:layout_constraintStart_toEndOf="@id/item_cover_card"
-                app:layout_constraintTop_toBottomOf="@id/subject" />
-
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_30sdp"
+                android:orientation="vertical"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/item_cover_card"
-                tools:listitem="@layout/paper_list_item" />
+                android:layout_marginTop="@dimen/_20sdp"
+                app:layout_constraintWidth_percent="0.8"
+                >
+
+                <TextView
+                    android:id="@+id/item_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_12sdp"
+                    android:textSize="@dimen/_18sdp"
+                    android:text="The Art Of War"
+                    android:textColor="@color/dark_gray" />
+
+                <TextView
+                    android:id="@+id/author_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_marginBottom="@dimen/_5sdp"
+                    android:layout_marginStart="@dimen/_12sdp"
+                    android:text="@string/author"
+                    android:textColor="@color/gray"
+                    android:textSize="@dimen/_11ssp" />
+
+                <TextView
+                    android:id="@+id/university"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/_5sdp"
+                    android:layout_marginStart="@dimen/_12sdp"
+                    android:text="@string/university"
+                    android:textColor="@color/gray"
+                    android:textSize="@dimen/_11ssp" />
+
+                <TextView
+                    android:id="@+id/faculty"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/_5sdp"
+                    android:layout_marginStart="@dimen/_12sdp"
+                    android:text="@string/faculty"
+                    android:textColor="@color/gray"
+                    android:textSize="@dimen/_11ssp" />
+
+                <TextView
+                    android:id="@+id/subject"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/_5sdp"
+                    android:layout_marginStart="@dimen/_12sdp"
+                    android:text="@string/subject"
+                    android:textColor="@color/gray"
+                    android:textSize="@dimen/_11ssp" />
+
+
+                <TextView
+                    android:id="@+id/pages_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/_5sdp"
+                    android:layout_marginStart="@dimen/_12sdp"
+                    android:text="@string/pages_preview"
+                    android:textColor="@color/gray"
+                    android:textSize="@dimen/_11ssp" />
+
+            </LinearLayout>
+
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/download_button"
@@ -134,27 +152,28 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_20sdp"
                 android:paddingHorizontal="@dimen/_15sdp"
+                android:layout_marginHorizontal="@dimen/_5sdp"
                 android:text="@string/download_preview"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
                 android:textSize="@dimen/_10ssp"
                 app:layout_constraintEnd_toStartOf="@id/buy_button"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/recv" />
+                app:layout_constraintTop_toBottomOf="@id/items_details" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/buy_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_20sdp"
                 android:paddingHorizontal="@dimen/_15sdp"
+                android:layout_marginHorizontal="@dimen/_5sdp"
                 android:text="@string/buy"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
                 android:textSize="@dimen/_10ssp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/download_button"
-                app:layout_constraintTop_toBottomOf="@id/recv" />
+                app:layout_constraintTop_toTopOf="@id/download_button"/>
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

@@ -27,7 +27,7 @@ class Converters {
     }
 
     @TypeConverter
-    fun fromPathDataTpString(pathData: PathData): String {
+    fun fromPathDataToString(pathData: PathData): String {
         return Gson().toJson(pathData)
     }
 

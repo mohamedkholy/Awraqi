@@ -2,10 +2,12 @@ package com.example.waraq.dataBase
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
 import com.example.waraq.data.DownloadState
 import com.example.waraq.data.DrawingItem
+import com.example.waraq.data.ItemId
 import com.example.waraq.data.Notes
 import com.example.waraq.data.PageNotes
 import com.example.waraq.data.PaperItem
@@ -32,7 +34,21 @@ interface Dao {
     suspend fun upsertPageNote(pageNote: PageNotes)
 
     @Query("select notes from pagenotes where pdfId=:pdfId")
-    fun selectFileNotes(pdfId: String):LiveData<Notes>
+    fun selectFileNotes(pdfId: String):Notes
 
+    @Upsert
+    fun addFavoriteItem(favoriteItemId: ItemId)
+
+    @Query("SELECT EXISTS(SELECT * FROM favoriteitemid WHERE id = :id)")
+    fun isFavorite(id: String):Boolean
+
+    @Query("select id from favoriteitemid")
+    fun getFavoriteItems(): List<String>
+
+    @Query("delete from FavoriteItemId where id=:id")
+    fun removeFavoriteItem(id: String)
+
+    @Delete
+    fun deleteItem(item: PaperItem)
 
 }

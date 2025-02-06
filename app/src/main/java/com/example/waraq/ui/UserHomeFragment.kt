@@ -4,8 +4,10 @@ package com.example.waraq.ui
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.widget.SearchView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
@@ -24,6 +26,7 @@ class UserHomeFragment : BaseFragment<FragmentUserHomeBinding>(R.layout.fragment
     private lateinit var searchView: SearchView
     private val translations: HashMap<String, String> = hashMapOf(
         "تم شراؤه" to "Purchased",
+        "المفضل" to "Favorites",
         "الجامعة" to "University",
         "الكلية" to "Faculty",
         "الصف" to "Grade",
@@ -36,7 +39,13 @@ class UserHomeFragment : BaseFragment<FragmentUserHomeBinding>(R.layout.fragment
             (childFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).findNavController()
         binding.bottomNavigation.setupWithNavController(navController)
         binding.toolbar.inflateMenu(R.menu.user_home_menu)
+        prepareSearchView()
+    }
+
+    private fun prepareSearchView() {
         searchView = binding.toolbar.menu.findItem(R.id.action_search).actionView as SearchView
+        val searchText = searchView.findViewById<EditText>(androidx.appcompat.R.id.search_src_text)
+        searchText.setTextColor(ContextCompat.getColor(requireContext(), R.color.primary_color))
     }
 
     private fun setSpinnerAdapter() {
@@ -54,13 +63,12 @@ class UserHomeFragment : BaseFragment<FragmentUserHomeBinding>(R.layout.fragment
                         parent: AdapterView<*>,
                         view: View?,
                         position: Int,
-                        id: Long
+                        id: Long,
                     ) {
                         view?.apply {
-                            var filter =(this as TextView).text.toString()
+                            var filter = (this as TextView).text.toString()
                             runBlocking {
-                                if(LanguagePreference.getLanguage(requireContext())=="ar")
-                                {
+                                if (LanguagePreference.getLanguage(requireContext()) == "ar") {
                                     filter = translations[filter]!!
                                 }
                             }

@@ -1,17 +1,10 @@
 package com.example.waraq.ui
 
-import android.content.Context
-import android.content.SharedPreferences
 import android.util.Patterns
 import androidx.activity.addCallback
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
-import androidx.datastore.core.DataStore
-import androidx.datastore.dataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.preferencesDataStore
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.waraq.R
@@ -19,6 +12,7 @@ import com.example.waraq.databinding.FragmentLoginSignupBinding
 import com.example.waraq.util.Constants
 import com.example.waraq.util.EmailPreferences
 import com.example.waraq.util.UserTypePreferences
+import com.example.waraq.viewModels.ItemsViewModel
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
@@ -32,6 +26,9 @@ import java.util.regex.Pattern
 class LoginSignupFragment :
     BaseFragment<FragmentLoginSignupBinding>(R.layout.fragment_login_signup) {
 
+    companion object{
+        private const val PASSWORD_PATTERN = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,20}$"
+    }
     private val firebaseAuth = FirebaseAuth.getInstance()
     private val firestore = Firebase.firestore
 
@@ -42,14 +39,18 @@ class LoginSignupFragment :
 
     override fun addCallbacks() {
 
+        binding.forgetPassword.setOnClickListener {
+            findNavController().navigate(R.id.forgetPasswordFragment)
+        }
+
         binding.backButton.setOnClickListener {
-            if ( !binding.isSigning!! && !binding.isLogging!!) {
+            if (!binding.isSigning!! && !binding.isLogging!!) {
                 findNavController().popBackStack()
             }
         }
 
-        requireActivity().onBackPressedDispatcher.addCallback(this){
-            if ( !binding.isSigning!! && !binding.isLogging!!) {
+        requireActivity().onBackPressedDispatcher.addCallback(this) {
+            if (!binding.isSigning!! && !binding.isLogging!!) {
                 findNavController().popBackStack()
             }
         }
@@ -57,11 +58,18 @@ class LoginSignupFragment :
         binding.apply {
 
             signupButton.setOnClickListener {
-                signUp()
+                if (!binding.isSigning!! && !binding.isLogging!!) {
+                    signUp()
+                }
+
             }
 
             loginButton.setOnClickListener {
-                login()
+                if (!binding.isSigning!! && !binding.isLogging!!) {
+                    lifecycleScope.launch {
+                        login()
+                    }
+                }
             }
 
             userTypeSelectorRadioGroup.setOnCheckedChangeListener { _, selectedItem ->
@@ -81,6 +89,7 @@ class LoginSignupFragment :
             passwordEt.doOnTextChanged { _, _, _, _ ->
                 binding.passwordTextInputLayout.isErrorEnabled = false
             }
+
             emailEt.doOnTextChanged { _, _, _, _ ->
                 binding.emailTextInputLayout.isErrorEnabled = false
             }
@@ -96,7 +105,7 @@ class LoginSignupFragment :
             binding.isSigning = true
             firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnSuccessListener {
-                    onSignupSuccess( email)
+                    onSignupSuccess(email)
                 }.addOnFailureListener {
                     binding.isSigning = false
                     Snackbar.make(binding.root, "Signup failed", Snackbar.LENGTH_LONG).show()
@@ -106,20 +115,28 @@ class LoginSignupFragment :
 
     }
 
-    private fun login() {
+    private suspend fun login() {
         val password = binding.passwordEt.text.toString()
         val email = binding.emailEt.text.toString()
         if (validateEmailAndPassword(email, password)) {
             binding.isLogging = true
-            firebaseAuth.signInWithEmailAndPassword(email, password)
-                .addOnSuccessListener {
-                    lifecycleScope.launch {
-                        onLoginSuccess(email)
+            val admin =
+                firestore.collection(Constants.FIRE_STORE_ADMIN_COLLECTION).document(email).get()
+                    .await()
+            if (admin.exists()) {
+                findNavController().navigate(R.id.adminHomeFragment)
+                binding.isLogging = false
+            } else {
+                firebaseAuth.signInWithEmailAndPassword(email, password)
+                    .addOnSuccessListener {
+                        lifecycleScope.launch {
+                            onLoginSuccess(email)
+                        }
+                    }.addOnFailureListener {
+                        binding.isLogging = false
+                        Snackbar.make(binding.root, "Login failed", Snackbar.LENGTH_LONG).show()
                     }
-                }.addOnFailureListener {
-                    binding.isLogging = false
-                    Snackbar.make(binding.root, "Login failed", Snackbar.LENGTH_LONG).show()
-                }
+            }
         }
 
     }
@@ -129,14 +146,9 @@ class LoginSignupFragment :
             firestore.collection(Constants.FIRE_STORE_USERS_COLLECTION).document(email).get()
                 .await()
         if (student.exists()) {
-            setUserTypeAndNavigateScreen(Constants.USER_TYPE, email)
-        } else {
-            val admin =
-                firestore.collection(Constants.FIRE_STORE_ADMIN_COLLECTION).document(email).get()
-                    .await()
-            if (admin.exists()) {
-                setUserTypeAndNavigateScreen(Constants.ADMIN_USER_TYPE, email)
-            }
+            val viewModel = ViewModelProvider(this)[ItemsViewModel::class]
+            if (viewModel.saveFavoriteItems(email))
+                setUserTypeAndNavigateScreen(Constants.USER_TYPE, email)
         }
 
     }
@@ -161,7 +173,7 @@ class LoginSignupFragment :
         firestore.collection(Constants.FIRE_STORE_USERS_COLLECTION)
             .document(email).set(map).addOnSuccessListener {
                 runBlocking {
-                    setUserTypeAndNavigateScreen(Constants.USER_TYPE,email)
+                    setUserTypeAndNavigateScreen(Constants.USER_TYPE, email)
                 }
             }.addOnFailureListener {
                 binding.isSigning = false
@@ -171,7 +183,7 @@ class LoginSignupFragment :
 
 
     private fun isValidPassword(password: String): Boolean {
-        val PASSWORD_PATTERN = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,20}$"
+
 
         val pattern = Pattern.compile(PASSWORD_PATTERN)
         val matcher = pattern.matcher(password)
@@ -180,8 +192,8 @@ class LoginSignupFragment :
     }
 
     private suspend fun setUserTypeAndNavigateScreen(userType: String, email: String) {
-        EmailPreferences.saveEmail(requireContext(),email)
-        UserTypePreferences.saveUserType(requireContext(),userType)
+        EmailPreferences.saveEmail(requireContext(), email)
+        UserTypePreferences.saveUserType(requireContext(), userType)
         println(4)
         binding.isLogging = false
         binding.isSigning = false

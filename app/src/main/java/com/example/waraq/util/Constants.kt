@@ -7,8 +7,6 @@ object Constants {
     const val DATA_STORE_NIGHT_MODE = "DATA_STORE_NIGHT_MODE"
     const val USER_TYPE = "USER_TYPE"
     const val EMAIL_KEY = "EMAIL_KEY"
-    const val ADMIN_USER_TYPE = "ADMIN_USER_TYPE"
-    const val STUDENT_USER_TYPE = "STUDENT_USER_TYPE"
     const val FIRE_STORE_USERS_COLLECTION = "USERS"
     const val FIRE_STORE_ADMIN_COLLECTION = "ADMINS"
     const val FIRE_STORE_BOOKS_COLLECTION = "BOOKS"
@@ -19,9 +17,8 @@ object Constants {
     const val DOWNLOAD_FAILED = "DOWNLOAD_FAILED"
     const val DOWNLOAD_CANCELED = "DOWNLOAD_CANCELED"
     const val SUPPORT_EMAIL = "mohamed.elkholy14920@gmail.com"
-    const val DOWNLOAD_PROGRESS_ACTION = "com.example.DOWNLOAD_PROGRESS_ACTION"
-    const val DOWNLOAD_TITLE_KEY= "DOWNLOAD_TITLE_KEY"
     const val DOWNLOAD_PROGRESS_KEY= "DOWNLOAD_PROGRESS_KEY"
+    const val USER_FAVORITES_COLLECTION = "USER_FAVORITES_COLLECTION"
 
 }
 

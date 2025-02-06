@@ -7,7 +7,7 @@
     <string name="welcome">مرحبًا</string>
     <string name="email">البريد الإلكتروني</string>
     <string name="password">كلمة المرور</string>
-    <string name="forget_password">هل نسيت كلمة المرور؟</string>
+    <string name="forget_password">نسيت كلمة المرور؟</string>
     <string name="or">أو</string>
     <string name="clear_all_pages">مسح جميع الصفحات</string>
     <string name="add_note">إضافة ملاحظة</string>
@@ -33,18 +33,32 @@
     <string name="store">المتجر</string>
     <string name="no_items_here_yet">لا توجد عناصر محملة بعد</string>
     <string name="download">تحميل</string>
-    <string name="downloading_items">جاري تنزيل العناصر</string>
-    <string name="is_downloading">%1$s قيد التنزيل</string>
-    <string name="download_failed">فشل تنزيل %1$s</string>
-    <string name="download_canceled">تم إلغاء تنزيل %1$s</string>
-    <string name="is_downloaded">%1$s تم تنزيله</string>
+    <string name="downloading_items">جاري تحميل العناصر</string>
+    <string name="is_downloading">%1$s قيد التحميل</string>
+    <string name="download_failed">فشل تحميل %1$s</string>
+    <string name="download_canceled">تم إلغاء تحميل %1$s</string>
+    <string name="is_downloaded">%1$s تم تحميله</string>
     <string name="loading_the_file">يتم تحميل الملف</string>
     <string name="signup">تسجيل جديد</string>
     <string name="login">تسجيل الدخول</string>
     <string name="pages">%1$s صفحة</string>
+    <string name="university"><font color='#D4A157'>جامعة: </font> </string>
+    <string name="faculty"><font color='#D4A157'>كلية: </font> </string>
+    <string name="subject"><font color='#D4A157'>مادة: </font> </string>
+    <string name="pages_preview"><font color='#D4A157'>عدد الصفحات: </font> </string>
+    <string name="author"><font color='#D4A157'>المؤلف: </font> </string>
+    <string name="price">%1$s جنيه</string>
+    <string name="send">إرسال</string>
+    <string name="password_reset">تغيير كلمة المرور</string>
+    <string name="reset_email_was_sent_successfully">تم الإرسال بنجاح</string>
+    <string name="failed">فشلت العملية</string>
+    <string name="limited_access">وصول محدود</string>
+    <string name="delete">مسح</string>
+    <string name="no_internet_connection">لا يتوفر إتصال بالإنترنت</string>
 
     <array name="filter_spinner">
         <item>تم شراؤه</item>
+        <item>المفضل</item>
         <item>الجامعة</item>
         <item>الكلية</item>
         <item>الصف</item>
@@ -52,8 +66,29 @@
     </array>
 
     <array name="langs">
-        <item>العربية</item>
         <item>English</item>
+        <item>العربية</item>
+    </array>
+
+    <array name="grade">
+        <item>first grade</item>
+        <item>second grade</item>
+        <item>third grade</item>
+        <item>forth grade</item>
+        <item>fifth grade</item>
+    </array>
+
+    <array name="semester">
+        <item>first semester</item>
+        <item>second semester</item>
+    </array>
+
+    <array name="university">
+        <item>Tanta University</item>
+    </array>
+
+    <array name="faculty">
+        <item>Medicine</item>
     </array>
 
 </resources>

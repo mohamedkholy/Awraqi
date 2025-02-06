@@ -1,5 +1,3 @@
 package com.example.waraq.data
 
-class Notes(val notes:HashMap<Int,String>) {
-
-}
+class Notes(val notes:HashMap<Int,String>)

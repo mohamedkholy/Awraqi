@@ -6,10 +6,10 @@ import androidx.lifecycle.LiveData
 import com.example.waraq.dataBase.MyDatabase
 import com.example.waraq.data.DownloadState
 import com.example.waraq.data.DrawingItem
+import com.example.waraq.data.ItemId
 import com.example.waraq.data.Notes
 import com.example.waraq.data.PageNotes
 import com.example.waraq.data.PaperItem
-import com.example.waraq.data.Purchased
 import com.example.waraq.services.DownloadItemService
 import com.example.waraq.util.Constants
 import com.example.waraq.util.EmailPreferences
@@ -21,6 +21,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import java.io.File
 
 class MyRepository(val context: Context? = null) {
 
@@ -39,25 +40,25 @@ class MyRepository(val context: Context? = null) {
             if (userItemIdList.isNotEmpty()) {
                 paperItemList.forEach { item ->
                     if (userItemIdList.contains(item.id))
-                        item.isPurchased = Purchased.PURCHASED
+                        item.isPurchased = true
                 }
             }
             return@withContext paperItemList
         }
     }
 
-     suspend fun getUserBooksIds(): List<String> {
+    suspend fun getUserBooksIds(): List<String> {
         val userEmail = EmailPreferences.getEmail(context!!)
-        val booksIdsList = mutableListOf<String>()
+        var booksIdsList = mutableListOf<ItemId>()
         if (userEmail == null)
-            return booksIdsList
+            return mutableListOf()
         val bookIds =
             firestoreDatabase.collection(Constants.FIRE_STORE_USERS_COLLECTION).document(userEmail)
                 .collection(Constants.FIRE_STORE_USER_BOOKS_COLLECTION).get().await()
-        bookIds.documents.forEach { book ->
-            booksIdsList.add(book.id)
+        if (!bookIds.isEmpty) {
+            booksIdsList = bookIds.toObjects(ItemId::class.java)
         }
-        return booksIdsList
+        return booksIdsList.map { it.id }
     }
 
     fun getAllDownloadedItems(): LiveData<List<PaperItem>> {
@@ -82,7 +83,7 @@ class MyRepository(val context: Context? = null) {
     }
 
     fun cancelDownloadTask(item: PaperItem) {
-        Firebase.storage.getReferenceFromUrl(item.url!!).activeDownloadTasks.forEach {
+        Firebase.storage.getReferenceFromUrl(item.url).activeDownloadTasks.forEach {
             it.cancel()
         }
         item.downloadState = DownloadState.notDownloded
@@ -106,12 +107,83 @@ class MyRepository(val context: Context? = null) {
         }
     }
 
-    fun getAllNotes(pdfId: String): LiveData<Notes> {
+    fun getAllNotes(pdfId: String): Notes {
         return dao.selectFileNotes(pdfId)
     }
 
     suspend fun saveNote(pageNote: PageNotes) {
         dao.upsertPageNote(pageNote)
+    }
+
+    suspend fun addFavoriteItem(id: String) {
+        dao.addFavoriteItem(ItemId(id))
+        addToFireStore(id)
+    }
+
+    private suspend fun addToFireStore(id: String) {
+        val userEmail = EmailPreferences.getEmail(context!!)
+        userEmail?.apply {
+            firestoreDatabase.collection(Constants.FIRE_STORE_USERS_COLLECTION).document(userEmail)
+                .collection(Constants.USER_FAVORITES_COLLECTION).document(id)
+                .set(ItemId(id))
+        }
+
+    }
+
+    fun isFavorite(id: String): Boolean {
+        return dao.isFavorite(id)
+    }
+
+    fun getFavoriteItems(): List<String> {
+        return dao.getFavoriteItems()
+    }
+
+    suspend fun saveFavoriteItems(email: String): Boolean {
+        return withContext(Dispatchers.IO) {
+            val result =
+                firestoreDatabase.collection(Constants.FIRE_STORE_USERS_COLLECTION).document(email)
+                    .collection(Constants.USER_FAVORITES_COLLECTION).get().await()
+            if (result != null) {
+                val favoriteIds = result.toObjects(ItemId::class.java)
+                favoriteIds.forEach { item ->
+                    dao.addFavoriteItem(item)
+                }
+                return@withContext true
+            } else {
+                return@withContext false
+            }
+        }
+    }
+
+    suspend fun removeFavoriteItem(id: String) {
+        dao.removeFavoriteItem(id)
+        val userEmail = EmailPreferences.getEmail(context!!)
+        userEmail?.apply {
+            firestoreDatabase.collection(Constants.FIRE_STORE_USERS_COLLECTION).document(userEmail)
+                .collection(Constants.USER_FAVORITES_COLLECTION).document(id).delete()
+
+        }
+    }
+
+    fun deleteItem(item: PaperItem) {
+        if (deleteItemFiles(item)) {
+            dao.deleteItem(item)
+        }
+
+    }
+
+    private fun deleteItemFiles(item: PaperItem): Boolean {
+        var deletePdfSuccess = true
+        val pdfFile = File(context!!.filesDir, item.title)
+        val coverFile = File(context.filesDir, item.title + "-cover")
+        if (pdfFile.exists()) {
+            deletePdfSuccess = pdfFile.delete()
+        }
+        if (coverFile.exists() && deletePdfSuccess) {
+            coverFile.delete()
+        }
+
+        return deletePdfSuccess
     }
 
 
