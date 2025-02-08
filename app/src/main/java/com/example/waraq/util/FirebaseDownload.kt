@@ -1,9 +1,9 @@
 package com.example.waraq.util
 
 import android.content.Context
-import com.example.waraq.data.DownloadState
-import com.example.waraq.data.PaperItem
-import com.example.waraq.repository.MyRepository
+import com.example.waraq.data.model.DownloadState
+import com.example.waraq.data.model.PaperItem
+import com.example.waraq.data.MyRepository
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FileDownloadTask
 import com.google.firebase.storage.ktx.storage
@@ -19,7 +19,7 @@ import java.io.File
 class FirebaseDownload(val context: Context) {
 
     private val firebaseStorage = Firebase.storage
-    private val repository = MyRepository()
+    private val repository = MyRepository(context)
     private var bytesTransferred = 1L
     private var lastBytesTransferred = 0L
     private lateinit var item: PaperItem

@@ -7,12 +7,12 @@
     >
     <fragment
         android:id="@+id/storeItemsFragment"
-        android:name="com.example.waraq.ui.StoreItemsFragment"
+        android:name="com.example.waraq.ui.homeItems.StoreItemsFragment"
         android:label="fragment_store_books"
         tools:layout="@layout/fragment_store_items" />
     <fragment
         android:id="@+id/DownloadedFragment"
-        android:name="com.example.waraq.ui.DownloadedItemsFragment"
+        android:name="com.example.waraq.ui.homeItems.DownloadedItemsFragment"
         android:label="fragment_my_books"
         tools:layout="@layout/fragment_downloaded_items" />
 

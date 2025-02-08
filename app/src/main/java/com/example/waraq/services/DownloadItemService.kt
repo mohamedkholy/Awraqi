@@ -11,13 +11,13 @@ import android.os.IBinder
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import com.example.waraq.R
-import com.example.waraq.data.DownloadState
-import com.example.waraq.data.PaperItem
-import com.example.waraq.repository.MyRepository
+import com.example.waraq.data.model.DownloadState
+import com.example.waraq.data.model.PaperItem
+import com.example.waraq.data.MyRepository
 import com.example.waraq.util.Constants
 import com.example.waraq.util.CryptoManager
 import com.example.waraq.util.FirebaseDownload
-import com.example.waraq.util.LanguagePreference
+import com.example.waraq.data.preferences.LanguagePreference
 import com.example.waraq.util.LocaleHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -83,7 +83,7 @@ class DownloadItemService : Service() {
                 item.title
             )
         )
-        FirebaseDownload(this).downloadBook(item).collect { result ->
+        FirebaseDownload(applicationContext).downloadBook(item).collect { result ->
             if (result is Int) {
                 showNotification(
                     abs(item.id.hashCode()), getNotification(
@@ -133,7 +133,7 @@ class DownloadItemService : Service() {
                     val outFile = File(filesDir, item.title)
                     CryptoManager().encryptFile(result, FileOutputStream(outFile))
                     item.downloadState = DownloadState.downloaded
-                    MyRepository().saveItem(item)
+                    MyRepository(applicationContext).saveItem(item)
                     stopSelf()
                 }
 

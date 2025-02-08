@@ -12,11 +12,12 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
+import com.example.waraq.Base.BaseFragment
 import com.example.waraq.R
-import com.example.waraq.data.ItemsFilter
+import com.example.waraq.data.model.ItemsFilter
 import com.example.waraq.databinding.FragmentUserHomeBinding
-import com.example.waraq.util.LanguagePreference
-import com.example.waraq.viewModels.ItemsViewModel
+import com.example.waraq.data.preferences.LanguagePreference
+import com.example.waraq.ui.homeItems.ItemsViewModel
 import kotlinx.coroutines.runBlocking
 
 

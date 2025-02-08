@@ -11,10 +11,10 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
-import com.example.waraq.data.ThemePreference
-import com.example.waraq.dataBase.MyDatabase
+import com.example.waraq.data.model.ThemePreference
+import com.example.waraq.data.dataBase.MyDatabase
 import com.example.waraq.databinding.ActivityMainBinding
-import com.example.waraq.util.LanguagePreference
+import com.example.waraq.data.preferences.LanguagePreference
 import com.example.waraq.util.LocaleHelper
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
