@@ -7,5 +7,4 @@
         android:startColor="#FFEDD2"
         android:type="linear" />
     <corners android:radius="7dp"/>
-    <stroke android:color="@color/primary_color" android:width="1dp"/>
 </shape>

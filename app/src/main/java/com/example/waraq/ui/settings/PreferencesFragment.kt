@@ -1,9 +1,11 @@
 package com.example.waraq.ui.settings
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.view.View
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
+import android.widget.ArrayAdapter
 import android.widget.CompoundButton
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
@@ -13,8 +15,8 @@ import com.example.waraq.MainActivity
 import com.example.waraq.R
 import com.example.waraq.data.model.Languages
 import com.example.waraq.data.model.ThemePreference
-import com.example.waraq.databinding.FragmentPreferencesBinding
 import com.example.waraq.data.preferences.LanguagePreference
+import com.example.waraq.databinding.FragmentPreferencesBinding
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.util.Locale
@@ -27,11 +29,11 @@ class PreferencesFragment :
     override fun setup() {
         runBlocking {
             var lang = LanguagePreference.getLanguage(requireContext())
-            if (lang==null){
-                 lang =Locale.getDefault().language
+            if (lang == null) {
+                lang = Locale.getDefault().language
             }
 
-                binding.langSpinner.setSelection(if (lang == "en") 0 else 1)
+            binding.langSpinner.setSelection(if (lang == "en") 0 else 1)
 
         }
     }
@@ -42,10 +44,11 @@ class PreferencesFragment :
         }
 
         binding.nightModeSwitch.apply {
-            runBlocking {
-                if (ThemePreference.isNightModeEnabled(requireContext()))
-                    isChecked = true
-            }
+            val nightModeFlags =
+                requireContext().resources.configuration.uiMode and
+                        Configuration.UI_MODE_NIGHT_MASK
+            if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES)
+                isChecked = true
             post {
                 setOnCheckedChangeListener { _: CompoundButton, b: Boolean ->
                     lifecycleScope.launch {
@@ -57,13 +60,18 @@ class PreferencesFragment :
             }
         }
         binding.langSpinner.apply {
+            val stringArray = resources.getStringArray(R.array.langs)
+            val adapter = ArrayAdapter(requireContext(), R.layout.spinner_item, stringArray)
+            adapter.setDropDownViewResource(R.layout.drop_down_spinner_item)
+            binding.langSpinner.adapter = adapter
+
             post {
                 onItemSelectedListener = object : OnItemSelectedListener {
                     override fun onItemSelected(
                         p0: AdapterView<*>?,
                         view: View?,
                         p2: Int,
-                        p3: Long
+                        p3: Long,
                     ) {
                         val lang = (view as TextView).text.toString().uppercase()
                         lifecycleScope.launch {

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">waraq</string>
+    <string name="app_name">Awraqi</string>
     <!-- Strings used for fragments for navigation -->
     <string name="next">Next</string>
     <string name="previous">Previous</string>
@@ -43,11 +43,11 @@
     <string name="signup">Signup</string>
     <string name="login">Login</string>
     <string name="pages">%1$s pages</string>
-    <string name="university"><font color='#D4A157'>University: </font> </string>
-    <string name="faculty"><font color='#D4A157'>faculty: </font> </string>
-    <string name="subject"><font color='#D4A157'>Subject: </font> </string>
-    <string name="pages_preview"><font color='#D4A157'>Pages: </font> </string>
-    <string name="author"><font color='#D4A157'>Author: </font> </string>
+    <string name="university"><font color='#376FCC'>University: </font> </string>
+    <string name="faculty"><font color='#376FCC'>faculty: </font> </string>
+    <string name="subject"><font color='#376FCC'>Subject: </font> </string>
+    <string name="pages_preview"><font color='#376FCC'>Pages: </font> </string>
+    <string name="author"><font color='#376FCC'>Author: </font> </string>
     <string name="price">%1$s EGP</string>
     <string name="send">Send</string>
     <string name="password_reset">Password Reset</string>

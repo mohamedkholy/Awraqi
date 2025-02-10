@@ -23,6 +23,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.koin.android.ext.android.inject
 import java.io.File
 import java.io.FileOutputStream
 import kotlin.math.abs
@@ -30,6 +31,8 @@ import kotlin.math.abs
 class DownloadItemService : Service() {
 
     private lateinit var notificationManager: NotificationManager
+    private val repository by inject<MyRepository>()
+    private val firebaseDownload by inject<FirebaseDownload>()
 
     override fun attachBaseContext(base: Context) {
         runBlocking {
@@ -83,13 +86,12 @@ class DownloadItemService : Service() {
                 item.title
             )
         )
-        FirebaseDownload(applicationContext).downloadBook(item).collect { result ->
+        firebaseDownload.downloadBook(item).collect { result ->
             if (result is Int) {
                 showNotification(
                     abs(item.id.hashCode()), getNotification(
                         result,
-                        getString(R.string.is_downloading, item.title)
-                        ,
+                        getString(R.string.is_downloading, item.title),
                         item.title
                     )
                 )
@@ -133,7 +135,7 @@ class DownloadItemService : Service() {
                     val outFile = File(filesDir, item.title)
                     CryptoManager().encryptFile(result, FileOutputStream(outFile))
                     item.downloadState = DownloadState.downloaded
-                    MyRepository(applicationContext).saveItem(item)
+                    repository.saveItem(item)
                     stopSelf()
                 }
 
@@ -149,7 +151,11 @@ class DownloadItemService : Service() {
         notificationManager.cancelAll()
     }
 
-    private fun getNotification(progress: Int?, notificationTitle: String, itemTitle:String): Notification {
+    private fun getNotification(
+        progress: Int?,
+        notificationTitle: String,
+        itemTitle: String,
+    ): Notification {
         val notification =
             NotificationCompat.Builder(this, Constants.DOWNLOAD_NOTIFICATION_CHANNEL_ID).apply {
                 setSmallIcon(R.drawable.baseline_auto_stories)
@@ -161,7 +167,7 @@ class DownloadItemService : Service() {
                     sendBroadcast(Intent(itemTitle).apply {
                         setPackage(packageName)
                         putExtras(Bundle().apply {
-                            putInt(Constants.DOWNLOAD_PROGRESS_KEY,progress)
+                            putInt(Constants.DOWNLOAD_PROGRESS_KEY, progress)
                         })
                     })
                 } else {

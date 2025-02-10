@@ -5,7 +5,9 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.settings.SettingFragment">
+        tools:context=".ui.settings.SettingFragment"
+        android:background="@color/background"
+        >
 
 
         <ImageView
@@ -42,7 +44,7 @@
             android:paddingHorizontal="@dimen/_5sdp"
             android:paddingVertical="@dimen/_15sdp"
             android:text="@string/sign_in"
-            android:textColor="@color/black"
+            android:textColor="@color/black_text"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/back_button" />
 
@@ -65,7 +67,7 @@
             android:paddingHorizontal="@dimen/_5sdp"
             android:paddingVertical="@dimen/_15sdp"
             android:text="@string/preferences"
-            android:textColor="@color/black"
+            android:textColor="@color/black_text"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/signIn"
 
@@ -90,7 +92,7 @@
             android:paddingHorizontal="@dimen/_5sdp"
             android:paddingVertical="@dimen/_15sdp"
             android:text="@string/support"
-            android:textColor="@color/black"
+            android:textColor="@color/black_text"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/preferences" />
 

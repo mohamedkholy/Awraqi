@@ -55,13 +55,12 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-    
+
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
 
     //coroutines
     implementation(libs.kotlinx.coroutines.android)
-
 
 
     //room database
@@ -71,6 +70,10 @@ dependencies {
 
     //Gson
     implementation(libs.gson)
+
+    //koin
+    implementation(libs.koin.android)
+
 
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
 
@@ -83,18 +86,18 @@ dependencies {
     implementation(libs.firebase.storage)
 
     //Dimen
-    implementation (libs.ssp.android)
-    implementation (libs.sdp.android)
+    implementation(libs.ssp.android)
+    implementation(libs.sdp.android)
 
     //flexLayout
-    implementation (libs.flexbox)
+    implementation(libs.flexbox)
 
     //pdfView
-    implementation (libs.android.pdf.viewer)
+    implementation(libs.android.pdf.viewer)
 
 
     //glide
-    implementation (libs.glide)
+    implementation(libs.glide)
 
     //DataStore
     implementation(libs.androidx.datastore.preferences)
@@ -102,7 +105,7 @@ dependencies {
     //swiperefreshlayout
     implementation(libs.androidx.swiperefreshlayout)
 
-    implementation ("net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:3.0.0-RC2")
+    implementation("net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:3.0.0-RC2")
 
 
 }

@@ -38,14 +38,11 @@ class RemoteDataSource(val context: Context) {
 
     }
 
-    fun downloadItem(context: Context?, item: PaperItem) {
-        if (context != null) {
+    fun downloadItem(item: PaperItem) {
             val intent = Intent(context, DownloadItemService::class.java)
             intent.setAction(DownloadItemService.Actions.START.toString())
             intent.putExtra(Constants.SERVICE_INTENT_NAME, item)
             context.startService(intent)
-        }
-
     }
 
 
@@ -94,9 +91,11 @@ class RemoteDataSource(val context: Context) {
 
     suspend fun getFavoriteItems(email: String):List<ItemId> {
         return withContext(Dispatchers.IO) {
+            println("before")
             val result =
                 firestoreDatabase.collection(Constants.FIRE_STORE_USERS_COLLECTION).document(email)
                     .collection(Constants.USER_FAVORITES_COLLECTION).get().await()
+            println(result)
             if (result != null) {
                 val favoriteIds = result.toObjects(ItemId::class.java)
                 return@withContext favoriteIds

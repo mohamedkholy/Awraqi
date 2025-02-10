@@ -27,9 +27,11 @@ import java.util.regex.Pattern
 class LoginSignupFragment :
     BaseFragment<FragmentLoginSignupBinding>(R.layout.fragment_login_signup) {
 
-    companion object{
-        private const val PASSWORD_PATTERN = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,20}$"
+    companion object {
+        private const val PASSWORD_PATTERN =
+            "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,20}$"
     }
+
     private val firebaseAuth = FirebaseAuth.getInstance()
     private val firestore = Firebase.firestore
 
@@ -128,6 +130,7 @@ class LoginSignupFragment :
                 findNavController().navigate(R.id.adminHomeFragment)
                 binding.isLogging = false
             } else {
+                println("log")
                 firebaseAuth.signInWithEmailAndPassword(email, password)
                     .addOnSuccessListener {
                         lifecycleScope.launch {
@@ -137,6 +140,7 @@ class LoginSignupFragment :
                         binding.isLogging = false
                         Snackbar.make(binding.root, "Login failed", Snackbar.LENGTH_LONG).show()
                     }
+
             }
         }
 
@@ -146,10 +150,12 @@ class LoginSignupFragment :
         val student =
             firestore.collection(Constants.FIRE_STORE_USERS_COLLECTION).document(email).get()
                 .await()
+        println(student)
         if (student.exists()) {
+            println("exists")
             val viewModel = ViewModelProvider(this)[ItemsViewModel::class]
-            if (viewModel.saveFavoriteItems(email))
-                setUserTypeAndNavigateScreen(Constants.USER_TYPE, email)
+            viewModel.saveFavoriteItems(email)
+            setUserTypeAndNavigateScreen(Constants.USER_TYPE, email)
         }
 
     }

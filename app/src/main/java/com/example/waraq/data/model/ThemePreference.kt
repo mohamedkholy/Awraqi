@@ -21,9 +21,9 @@ object ThemePreference {
 
     }
 
-    suspend fun isNightModeEnabled(context: Context): Boolean {
+    suspend fun isNightModeEnabled(context: Context): Boolean? {
         context.dataStore.data.first().apply {
-            return this[themeKey]?:false
+            return this[themeKey]
         }
     }
 }

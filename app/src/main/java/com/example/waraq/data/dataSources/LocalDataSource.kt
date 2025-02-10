@@ -15,11 +15,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
-class LocalDataSource(val context: Context) {
+class LocalDataSource(val context: Context, myDatabase: MyDatabase) {
 
-
-
-    private val dao = MyDatabase.createInstance().dao
+    private val dao = myDatabase.dao
 
     fun getAllDownloadedItems(): LiveData<List<PaperItem>> {
         return dao.getAllItems()
@@ -56,7 +54,7 @@ class LocalDataSource(val context: Context) {
         dao.upsertPageNote(pageNote)
     }
 
-     fun addFavoriteItem(id: String) {
+    fun addFavoriteItem(id: String) {
         dao.addFavoriteItem(ItemId(id))
     }
 

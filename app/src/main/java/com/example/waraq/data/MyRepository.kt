@@ -12,14 +12,13 @@ import com.example.waraq.data.model.PaperItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class MyRepository(val context: Context) {
+class MyRepository(
+    private val localDataSource: LocalDataSource,
+    private val remoteDataSource: RemoteDataSource,
+) {
 
-    private val localDataSource = LocalDataSource(context)
-    private val remoteDataSource = RemoteDataSource(context)
-
-
-    fun downloadItem(context: Context, item: PaperItem) {
-       remoteDataSource.downloadItem(context,item)
+    fun downloadItem(item: PaperItem) {
+        remoteDataSource.downloadItem(item)
     }
 
     suspend fun getAllStoreItems(): List<PaperItem> {
@@ -49,10 +48,9 @@ class MyRepository(val context: Context) {
 
     }
 
-    suspend fun saveFavoriteItems(email: String):Boolean{
+    suspend fun saveFavoriteItems(email: String) {
         val favoriteIds = remoteDataSource.getFavoriteItems(email)
         localDataSource.saveFavoriteItems(favoriteIds)
-        return favoriteIds.isNotEmpty()
     }
 
     fun getAllDownloadedItems(): LiveData<List<PaperItem>> {

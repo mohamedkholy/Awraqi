@@ -16,10 +16,9 @@ import kotlinx.coroutines.flow.flowOn
 import java.io.File
 
 
-class FirebaseDownload(val context: Context) {
+class FirebaseDownload(private val context: Context, private val repository : MyRepository) {
 
     private val firebaseStorage = Firebase.storage
-    private val repository = MyRepository(context)
     private var bytesTransferred = 1L
     private var lastBytesTransferred = 0L
     private lateinit var item: PaperItem

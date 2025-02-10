@@ -8,7 +8,6 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
@@ -19,11 +18,12 @@ import com.example.waraq.databinding.FragmentUserHomeBinding
 import com.example.waraq.data.preferences.LanguagePreference
 import com.example.waraq.ui.homeItems.ItemsViewModel
 import kotlinx.coroutines.runBlocking
+import org.koin.androidx.viewmodel.ext.android.activityViewModel
 
 
 class UserHomeFragment : BaseFragment<FragmentUserHomeBinding>(R.layout.fragment_user_home) {
 
-    private val viewModel by activityViewModels<ItemsViewModel>()
+    private val viewModel by activityViewModel<ItemsViewModel>()
     private lateinit var searchView: SearchView
     private val translations: HashMap<String, String> = hashMapOf(
         "تم شراؤه" to "Purchased",

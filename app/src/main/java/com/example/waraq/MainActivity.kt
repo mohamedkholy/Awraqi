@@ -20,7 +20,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 
-
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
@@ -30,7 +29,6 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch { setNightMode() }
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         setContentView(binding.root)
-        MyDatabase.createInstance(this)
         requestNotificationPermission()
         setSecureFlags(window)
         preventMonitoring()
@@ -58,7 +56,9 @@ class MainActivity : AppCompatActivity() {
 
     private suspend fun setNightMode() {
         val isNightModeEnabled = ThemePreference.isNightModeEnabled(this)
-        if (isNightModeEnabled) {
+        if (isNightModeEnabled == null) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+        } else if (isNightModeEnabled) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
@@ -74,10 +74,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun attachBaseContext(base: Context) {
-       runBlocking {
-           val lang = LanguagePreference.getLanguage(base)
-           super.attachBaseContext(if (lang != null) LocaleHelper.updateLanguage(base, lang) else base)
-       }
+        runBlocking {
+            val lang = LanguagePreference.getLanguage(base)
+            super.attachBaseContext(
+                if (lang != null) LocaleHelper.updateLanguage(
+                    base,
+                    lang
+                ) else base
+            )
+        }
     }
 
 

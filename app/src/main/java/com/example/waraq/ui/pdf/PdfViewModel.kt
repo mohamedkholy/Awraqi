@@ -1,8 +1,6 @@
 package com.example.waraq.ui.pdf
 
-import android.app.Application
-import android.content.Context
-import androidx.lifecycle.AndroidViewModel
+
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,32 +11,27 @@ import com.example.waraq.data.model.PageNotes
 import com.example.waraq.data.MyRepository
 import kotlinx.coroutines.launch
 
-class PdfViewModel(application: Application):AndroidViewModel(application){
-    private val myRepository = MyRepository(getContext())
+class PdfViewModel(private val myRepository: MyRepository) : ViewModel() {
     private val _notesLiveData = MutableLiveData<Notes>()
-    val notesLiveData:LiveData<Notes> = _notesLiveData
+    val notesLiveData: LiveData<Notes> = _notesLiveData
 
 
-    suspend fun getDrawingItem(id:String): DrawingItem? {
+    suspend fun getDrawingItem(id: String): DrawingItem? {
         return myRepository.getDrawingItem(id)
     }
 
-    fun upsertDrawingItem(drawingItem: DrawingItem){
+    fun upsertDrawingItem(drawingItem: DrawingItem) {
         myRepository.upsertDrawingItem(drawingItem)
     }
 
-     fun getAllNotes(pdfId:String){
-         _notesLiveData.postValue(myRepository.getAllNotes(pdfId))
+    fun getAllNotes(pdfId: String) {
+        _notesLiveData.postValue(myRepository.getAllNotes(pdfId))
     }
 
-    fun saveNote(pageNote: PageNotes){
-       viewModelScope.launch {
-           myRepository.saveNote(pageNote)
-       }
-    }
-
-    private fun getContext(): Context {
-        return getApplication<Application>().applicationContext
+    fun saveNote(pageNote: PageNotes) {
+        viewModelScope.launch {
+            myRepository.saveNote(pageNote)
+        }
     }
 
 

@@ -5,7 +5,9 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.settings.SettingFragment">
+        tools:context=".ui.settings.SettingFragment"
+        android:background="@color/background"
+        >
 
 
         <ImageView
@@ -54,7 +56,7 @@
                    android:paddingHorizontal="@dimen/_5sdp"
                    android:paddingVertical="@dimen/_15sdp"
                    android:text="@string/night_mode"
-                   android:textColor="@color/black"
+                   android:textColor="@color/black_text"
                    android:layout_weight="1"
                    />
 
@@ -92,7 +94,7 @@
                    android:paddingHorizontal="@dimen/_5sdp"
                    android:paddingVertical="@dimen/_15sdp"
                    android:text="@string/language"
-                   android:textColor="@color/black"
+                   android:textColor="@color/black_text"
                    android:layout_weight="1"
                    />
 
@@ -100,7 +102,7 @@
                    android:id="@+id/lang_spinner"
                    android:layout_width="wrap_content"
                    android:layout_height="wrap_content"
-                   android:entries="@array/langs"
+                   android:backgroundTint="@color/black_text"
                    />
 
            </LinearLayout>

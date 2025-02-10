@@ -9,7 +9,9 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/background"
+        >
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -89,7 +91,7 @@
                     android:layout_marginStart="@dimen/_12sdp"
                     android:textSize="@dimen/_18sdp"
                     android:text="The Art Of War"
-                    android:textColor="@color/dark_gray" />
+                    android:textColor="@color/black_text" />
 
                 <TextView
                     android:id="@+id/author_title"
@@ -155,7 +157,7 @@
                 android:layout_marginHorizontal="@dimen/_5sdp"
                 android:text="@string/download_preview"
                 android:textAllCaps="false"
-                android:textColor="@color/white"
+                android:textColor="@color/white_text"
                 android:textSize="@dimen/_10ssp"
                 app:layout_constraintEnd_toStartOf="@id/buy_button"
                 app:layout_constraintStart_toStartOf="parent"
@@ -169,7 +171,7 @@
                 android:layout_marginHorizontal="@dimen/_5sdp"
                 android:text="@string/buy"
                 android:textAllCaps="false"
-                android:textColor="@color/white"
+                android:textColor="@color/white_text"
                 android:textSize="@dimen/_10ssp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/download_button"

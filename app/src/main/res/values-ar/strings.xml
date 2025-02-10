@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ورق</string>
+    <string name="app_name">Awraqi</string>
     <string name="next">التالي</string>
     <string name="previous">السابق</string>
     <string name="filter_by">تصفية حسب</string>
@@ -42,11 +42,11 @@
     <string name="signup">تسجيل جديد</string>
     <string name="login">تسجيل الدخول</string>
     <string name="pages">%1$s صفحة</string>
-    <string name="university"><font color='#D4A157'>جامعة: </font> </string>
-    <string name="faculty"><font color='#D4A157'>كلية: </font> </string>
-    <string name="subject"><font color='#D4A157'>مادة: </font> </string>
-    <string name="pages_preview"><font color='#D4A157'>عدد الصفحات: </font> </string>
-    <string name="author"><font color='#D4A157'>المؤلف: </font> </string>
+    <string name="university"><font color='#376FCC'>جامعة: </font> </string>
+    <string name="faculty"><font color='#376FCC'>كلية: </font> </string>
+    <string name="subject"><font color='#376FCC'>مادة: </font> </string>
+    <string name="pages_preview"><font color='#376FCC'>عدد الصفحات: </font> </string>
+    <string name="author"><font color='#376FCC'>المؤلف: </font> </string>
     <string name="price">%1$s جنيه</string>
     <string name="send">إرسال</string>
     <string name="password_reset">تغيير كلمة المرور</string>

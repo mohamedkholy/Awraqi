@@ -50,4 +50,12 @@
         <item name="android:textCursorDrawable">@drawable/cursor</item>
     </style>
 
+    <style name="MyDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="colorOnPrimary">@color/black</item>
+    </style>
+
+    <style name="MyStyle">
+        <item name="colorAccent">@color/black_text</item>
+    </style>
+
 </resources>

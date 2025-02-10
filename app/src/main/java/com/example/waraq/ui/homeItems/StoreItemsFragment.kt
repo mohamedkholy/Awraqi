@@ -1,7 +1,5 @@
 package com.example.waraq.ui.homeItems
 
-
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
@@ -11,7 +9,7 @@ import com.example.waraq.data.model.ItemsFilter
 import com.example.waraq.data.model.ListItem
 import com.example.waraq.databinding.FragmentStoreItemsBinding
 import com.example.waraq.data.model.PaperItem
-import com.example.waraq.ui.user.UserHomeFragmentDirections
+import com.example.waraq.ui.UserHomeFragmentDirections
 import com.example.waraq.util.ConnectivityObserver
 import com.example.waraq.util.ConnectivityObserver.ConnectionStatus
 import com.google.android.flexbox.FlexDirection
@@ -19,12 +17,13 @@ import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.activityViewModel
 
 
 class StoreItemsFragment : BaseFragment<FragmentStoreItemsBinding>(R.layout.fragment_store_items),
     ItemsAdapter.OnItemClickListener {
 
-    private val viewModel by activityViewModels<ItemsViewModel>()
+    private val viewModel by activityViewModel<ItemsViewModel>()
     private var paperItemList = mutableListOf<PaperItem>()
     private lateinit var adapter: ItemsAdapter
     private var filter: ItemsFilter = ItemsFilter.PURCHASED
@@ -86,8 +85,6 @@ class StoreItemsFragment : BaseFragment<FragmentStoreItemsBinding>(R.layout.frag
                 refreshRecyclerView()
             }
         }
-
-
     }
 
     private fun showNoConnectionSnackBar(show:Boolean) {
@@ -111,7 +108,6 @@ class StoreItemsFragment : BaseFragment<FragmentStoreItemsBinding>(R.layout.frag
             }
         }
     }
-
 
     private fun refreshRecyclerView() {
         if (filter == ItemsFilter.PURCHASED) {
@@ -144,7 +140,6 @@ class StoreItemsFragment : BaseFragment<FragmentStoreItemsBinding>(R.layout.frag
                 listOf(ListItem.Header(groupName)) + items.map { ListItem.Item(it) }
             }
 
-
         adapter.submitList(list)
         binding.swipeRefreshLayout.isRefreshing = false
     }
@@ -157,6 +152,5 @@ class StoreItemsFragment : BaseFragment<FragmentStoreItemsBinding>(R.layout.frag
         val navController = navHostFragment.findNavController()
         navController.navigate(action)
     }
-
 
 }

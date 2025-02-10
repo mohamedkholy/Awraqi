@@ -33,7 +33,7 @@
         android:layout_width="@dimen/_120sdp"
         android:layout_height="0dp"
         android:background="@drawable/small_round_corner_shape"
-        android:backgroundTint="#FAF2E6"
+        android:backgroundTint="@color/light_primary"
         android:gravity="bottom"
         android:padding="@dimen/_5sdp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -50,7 +50,7 @@
             android:gravity="center"
             android:lines="1"
             android:padding="@dimen/_2sdp"
-            android:textColor="@color/black"
+            android:textColor="@color/black_text"
             android:textSize="@dimen/_12sdp"
             android:layout_weight="1"
             />
@@ -60,6 +60,6 @@
             android:layout_height="wrap_content"
             android:src="@drawable/more"
             android:visibility="gone"
-            />
+            app:tint="@color/black_text" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

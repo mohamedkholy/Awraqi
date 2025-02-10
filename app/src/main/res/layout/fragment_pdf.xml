@@ -40,8 +40,7 @@
             app:layout_constraintBottom_toTopOf="@id/edit_radio_group"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            >
+            app:layout_constraintTop_toTopOf="parent">
 
             <View
                 android:id="@+id/draw_layout"
@@ -59,7 +58,7 @@
             android:layout_marginEnd="@dimen/_7sdp"
             android:layout_marginBottom="@dimen/_2sdp"
             android:background="@drawable/small_round_corner_shape"
-            android:backgroundTint="@color/primary_color"
+            android:backgroundTint="@color/pdf_background"
             android:checkedButton="@id/thick5"
             android:padding="@dimen/_12sdp"
             android:visibility="gone"
@@ -162,9 +161,9 @@
             android:id="@+id/draw_edit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/primary_color"
-            android:elevation=".2dp"
             android:background="@drawable/bottom_dialog_corners"
+            android:backgroundTint="@color/pdf_background"
+            android:elevation=".2dp"
             android:padding="@dimen/_5sdp"
             android:visibility="@{isDrawing? View.VISIBLE:View.GONE}"
             app:layout_constraintBottom_toTopOf="@id/edit_radio_group">
@@ -186,6 +185,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:button="@drawable/brightness"
+                android:buttonTint="@drawable/checkbox_button_tint_selector"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/colors_radio_group"
@@ -274,6 +274,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:button="@drawable/thickness"
+                android:buttonTint="@drawable/checkbox_button_tint_selector"
                 android:drawablePadding="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -286,7 +287,7 @@
             android:id="@+id/edit_radio_group"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/primary_color"
+            android:background="@color/pdf_background"
             android:gravity="center"
             android:orientation="horizontal"
             android:padding="@dimen/_5sdp"
@@ -360,7 +361,7 @@
             android:id="@+id/progress_circular"
             android:layout_width="@dimen/_70sdp"
             android:layout_height="@dimen/_70sdp"
-            android:indeterminateTint="@color/primary_color"
+            android:indeterminateTint="@color/pdf_background"
             android:visibility="@{isPdfLoaded? View.GONE:View.VISIBLE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -372,7 +373,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_5sdp"
             android:text="@string/loading_the_file"
-            android:textColor="@color/primary_color"
+            android:textColor="@color/pdf_background"
             android:textSize="@dimen/_20sdp"
             android:visibility="@{isPdfLoaded? View.GONE:View.VISIBLE}"
             app:layout_constraintEnd_toEndOf="@id/progress_circular"
@@ -385,11 +386,11 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_5sdp"
             android:background="@drawable/round_corner_shape"
-            android:backgroundTint="@color/primary_color"
+            android:backgroundTint="@color/pdf_background"
             android:gravity="center"
             android:orientation="horizontal"
-            android:paddingVertical="@dimen/_2sdp"
             android:paddingHorizontal="@dimen/_5sdp"
+            android:paddingVertical="@dimen/_2sdp"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -398,29 +399,27 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="@dimen/_3sdp"
                 android:text="@string/limited_access"
                 android:textColor="@color/white"
-                android:textSize="@dimen/_11ssp"
-                android:layout_margin="@dimen/_3sdp"
-                />
+                android:textSize="@dimen/_11ssp" />
 
             <TextView
                 android:id="@+id/timer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="@dimen/_3sdp"
                 android:text="00:30"
                 android:textColor="@color/white"
-                android:textSize="@dimen/_11ssp"
-                android:layout_margin="@dimen/_3sdp"
-                />
+                android:textSize="@dimen/_11ssp" />
 
         </LinearLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/primary_color"
             android:background="@drawable/bottom_dialog_corners"
+            android:backgroundTint="@color/pdf_background"
             android:elevation=".2dp"
             android:padding="@dimen/_10sdp"
             android:visibility="@{addingNote?View.VISIBLE:View.GONE}"
@@ -434,7 +433,7 @@
                 android:paddingHorizontal="@dimen/_5sdp"
                 android:paddingBottom="@dimen/_5sdp"
                 android:text="@string/save"
-                android:textColor="@color/sky_color"
+                android:textColor="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -451,7 +450,7 @@
                 android:id="@+id/note_et"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_100sdp"
-                android:backgroundTint="@color/primary_color"
+                android:backgroundTint="@color/pdf_background"
                 android:gravity="top"
                 android:hint="@string/add_note_hint"
                 android:textColor="@color/white"
@@ -464,8 +463,8 @@
             android:id="@+id/clear_draw_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/primary_color"
             android:background="@drawable/bottom_dialog_corners"
+            android:backgroundTint="@color/pdf_background"
             android:elevation=".2dp"
             android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@id/edit_radio_group">
@@ -475,7 +474,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/_20sdp"
-                android:backgroundTint="#DCB06E"
                 android:elevation="@dimen/_20sdp"
                 app:cardCornerRadius="@dimen/_10sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -490,7 +488,7 @@
                     android:gravity="center"
                     android:padding="@dimen/_10sdp"
                     android:text="@string/clear_all_pages"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/black" />
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
@@ -498,7 +496,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/_20sdp"
-                android:backgroundTint="#DCB06E"
                 android:elevation="@dimen/_20sdp"
                 app:cardCornerRadius="@dimen/_10sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -512,7 +509,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:padding="@dimen/_10sdp"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/black" />
             </androidx.cardview.widget.CardView>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -520,39 +517,38 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:minWidth="@dimen/_30sdp"
+            android:layout_marginTop="@dimen/_5sdp"
             android:background="@drawable/small_round_corner_shape"
-            android:backgroundTint="@color/primary_color"
+            android:backgroundTint="@color/pdf_background"
+            android:minWidth="@dimen/_30sdp"
+            android:orientation="horizontal"
             android:visibility="@{isPdfLoaded? View.VISIBLE:View.GONE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/timer_layout"
-            android:layout_marginTop="@dimen/_5sdp"
-            >
+            app:layout_constraintTop_toBottomOf="@id/timer_layout">
+
             <EditText
                 android:id="@+id/page_number"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:backgroundTint="@color/primary_color"
-                android:lines="1"
+                android:backgroundTint="@color/pdf_background"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
-                android:textSize="@dimen/_10ssp"
-                android:paddingStart="@dimen/_5sdp"
                 android:inputType="number"
-                />
+                android:lines="1"
+                android:paddingStart="@dimen/_5sdp"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_10ssp" />
+
             <TextView
                 android:id="@+id/pages_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:textColor="@color/white"
                 android:lines="1"
                 android:paddingEnd="@dimen/_5sdp"
-                android:textSize="@dimen/_10ssp"
-                />
+                android:textColor="@color/white"
+                android:textSize="@dimen/_10ssp" />
         </LinearLayout>
 
         <ImageView
@@ -561,14 +557,13 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/_5sdp"
             android:background="@drawable/small_round_corner_shape"
-            android:backgroundTint="@color/primary_color"
+            android:backgroundTint="@color/pdf_background"
             android:padding="@dimen/_5sdp"
             android:src="@drawable/baseline_comment_bank_24"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            />
+            app:layout_constraintTop_toTopOf="parent" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

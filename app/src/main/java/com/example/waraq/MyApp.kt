@@ -5,13 +5,26 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
+import com.example.waraq.di.dataBaseModule
+import com.example.waraq.di.dataModule
+import com.example.waraq.di.viewModelModule
 import com.example.waraq.util.Constants
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.startKoin
 
 class MyApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
         createNotificationChannel()
+        prepareKoin()
+    }
+
+    private fun prepareKoin() {
+        startKoin {
+            androidContext(this@MyApp)
+            modules(dataModule, viewModelModule, dataBaseModule)
+        }
     }
 
     private fun createNotificationChannel() {
@@ -28,7 +41,6 @@ class MyApp : Application() {
             notificationManager.createNotificationChannel(channel)
         }
     }
-
 
 
 }

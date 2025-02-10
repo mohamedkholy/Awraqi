@@ -44,6 +44,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -58,7 +59,7 @@ class PdfFragment : BaseFragment<FragmentPdfBinding>(R.layout.fragment_pdf) {
     private lateinit var decryptedFile: File
     private lateinit var loadingPdfJob: Job
     private var isDrawing = false
-    private val viewModel: PdfViewModel by viewModels()
+    private val viewModel: PdfViewModel by viewModel()
     private var drawingPathsMap = HashMap<Int, MutableList<Pair<Path, Paint>>>()
     private var drawingPathsCoordinatesMap = HashMap<Int, MutableList<PathData>>()
     private var currentPage = 0
@@ -226,7 +227,7 @@ class PdfFragment : BaseFragment<FragmentPdfBinding>(R.layout.fragment_pdf) {
         }
 
         binding.clearAllPages.setOnClickListener {
-            AlertDialog.Builder(requireContext()).apply {
+            AlertDialog.Builder(requireContext(),R.style.MyDialogTheme).apply {
                 setTitle("Clear All Pages")
                 setMessage("All pages drawings Will be cleared press \"Clear All Pages\" to proceed.")
                 setPositiveButton(

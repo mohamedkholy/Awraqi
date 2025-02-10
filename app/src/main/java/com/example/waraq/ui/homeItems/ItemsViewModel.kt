@@ -1,21 +1,19 @@
 package com.example.waraq.ui.homeItems
 
-import android.app.Application
-import android.content.Context
-import androidx.lifecycle.AndroidViewModel
+
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.waraq.data.MyRepository
 import com.example.waraq.data.model.ItemsFilter
 import com.example.waraq.data.model.PaperItem
-import com.example.waraq.data.MyRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ItemsViewModel(application: Application): AndroidViewModel(application) {
-
-    private val repository= MyRepository(getAppContext())
+class ItemsViewModel(private val myRepository : MyRepository): ViewModel(){
+    
     private val _storeItemsLiveData = MutableLiveData<List<PaperItem>>()
     var storeItemsLiveData: LiveData<List<PaperItem>> = _storeItemsLiveData
     var downloadedItemsLiveData:LiveData<List<PaperItem>> = MutableLiveData()
@@ -25,45 +23,40 @@ class ItemsViewModel(application: Application): AndroidViewModel(application) {
 
      fun getStoreBooks(){
         viewModelScope.launch {
-            _storeItemsLiveData.postValue( repository.getAllStoreItems())
+            _storeItemsLiveData.postValue( myRepository.getAllStoreItems())
         }
     }
 
 
     private fun getDownLoadedItems(){
-        downloadedItemsLiveData = repository.getAllDownloadedItems()
+        downloadedItemsLiveData = myRepository.getAllDownloadedItems()
     }
 
     suspend fun getUserBooksIds(): List<String> {
        return withContext(Dispatchers.Default){
-           return@withContext repository.getUserBooksIds()
+           return@withContext myRepository.getUserBooksIds()
        }
     }
 
 
     fun updateItem(item: PaperItem)
     { viewModelScope.launch {
-            repository.saveItem(item)
+            myRepository.saveItem(item)
         }
     }
-
-
-
-    private fun getAppContext(): Context {
-        return getApplication<Application>().applicationContext
-    }
+    
 
     fun getFavoriteItems(): List<String> {
-       return repository.getFavoriteItems()
+       return myRepository.getFavoriteItems()
     }
 
-     suspend fun saveFavoriteItems(email: String): Boolean {
-         return repository.saveFavoriteItems(email)
+     suspend fun saveFavoriteItems(email: String) {
+          myRepository.saveFavoriteItems(email)
     }
 
     fun deleteItem(item: PaperItem) {
          viewModelScope.launch {
-             repository.deleteItem(item)
+             myRepository.deleteItem(item)
          }
     }
 

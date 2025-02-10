@@ -17,27 +17,4 @@ import com.example.waraq.data.model.PaperItem
 @TypeConverters(Converters::class)
 abstract class MyDatabase : RoomDatabase() {
     abstract val dao: Dao
-
-    companion object {
-        @Volatile
-        private var instance: MyDatabase? = null
-        private const val DATABASE_NAME = "MyDataBase"
-
-        fun createInstance(context: Context): MyDatabase {
-            return instance ?: synchronized(this) {
-                build(context).also { instance = it }
-            }
-        }
-
-        fun createInstance(): MyDatabase {
-            return instance!!
-        }
-
-        private fun build(context: Context): MyDatabase {
-            return Room.databaseBuilder(context, MyDatabase::class.java, DATABASE_NAME)
-                .allowMainThreadQueries().build()
-        }
-
-    }
-
 }

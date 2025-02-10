@@ -2,7 +2,6 @@ package com.example.waraq.ui.homeItems
 
 import android.view.View
 import androidx.activity.addCallback
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
@@ -13,11 +12,13 @@ import com.example.waraq.data.model.ItemsFilter
 import com.example.waraq.data.model.ListItem
 import com.example.waraq.data.model.PaperItem
 import com.example.waraq.databinding.FragmentDownloadedItemsBinding
-import com.example.waraq.ui.user.UserHomeFragmentDirections
+import com.example.waraq.ui.UserHomeFragmentDirections
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.activityViewModel
+
 
 
 class DownloadedItemsFragment :
@@ -25,7 +26,7 @@ class DownloadedItemsFragment :
     ItemsAdapter.OnItemClickListener, ItemsAdapter.OnDeleteClickListener {
 
     private var searchText = ""
-    private val viewModel by activityViewModels<ItemsViewModel>()
+    private val viewModel by activityViewModel<ItemsViewModel>()
     private lateinit var adapter: ItemsAdapter
     private var paperItemList = mutableListOf<PaperItem>()
     private var filter: ItemsFilter = ItemsFilter.PURCHASED

@@ -27,6 +27,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.net.URL
 
 
@@ -39,7 +40,7 @@ class ItemPreviewFragment :
     private val item: PaperItem by lazy {
         args.item
     }
-    private val viewModel: ItemPreviewViewModel by viewModels()
+    private val viewModel: ItemPreviewViewModel by viewModel()
     private var connectionStatus: ConnectionStatus = ConnectionStatus.Unavailable
     private lateinit var connectionStatusSnackBar: Snackbar
 

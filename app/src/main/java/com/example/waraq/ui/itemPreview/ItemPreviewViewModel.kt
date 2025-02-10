@@ -1,9 +1,8 @@
 package com.example.waraq.ui.itemPreview
 
-import android.app.Application
-import android.content.Context
-import androidx.lifecycle.AndroidViewModel
+
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.waraq.data.model.DownloadState
 import com.example.waraq.data.model.PaperItem
@@ -11,12 +10,12 @@ import com.example.waraq.data.MyRepository
 import kotlinx.coroutines.launch
 
 
-class ItemPreviewViewModel(application: Application) : AndroidViewModel(application) {
+class ItemPreviewViewModel(private val myRepository : MyRepository): ViewModel(){
 
-    private val myRepository = MyRepository(getContext())
+
 
     fun startDownloading(item: PaperItem) {
-        myRepository.downloadItem(getContext(), item)
+        myRepository.downloadItem(item)
     }
 
     fun changeItemDownloadState(item: PaperItem) {
@@ -47,7 +46,5 @@ class ItemPreviewViewModel(application: Application) : AndroidViewModel(applicat
           }
     }
 
-    private fun getContext(): Context {
-        return getApplication<Application>().applicationContext
-    }
+
 }
