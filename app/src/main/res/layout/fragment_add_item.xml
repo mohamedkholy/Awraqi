@@ -58,7 +58,7 @@
                 android:layout_marginHorizontal="@dimen/_10sdp"
                 android:layout_marginTop="@dimen/_15sdp"
                 android:hint="title"
-                android:inputType="textEmailAddress"
+                android:inputType="text"
 
                 app:shapeAppearance="@style/Cut">
 
@@ -100,7 +100,7 @@
                 android:layout_marginHorizontal="@dimen/_10sdp"
                 android:layout_marginTop="@dimen/_15sdp"
                 android:hint="author"
-                android:inputType="textEmailAddress"
+                android:inputType="text"
 
                 app:shapeAppearance="@style/Cut">
 
@@ -121,7 +121,7 @@
                 android:layout_marginHorizontal="@dimen/_10sdp"
                 android:layout_marginTop="@dimen/_15sdp"
                 android:hint="subject"
-                android:inputType="textEmailAddress"
+                android:inputType="text"
 
                 app:shapeAppearance="@style/Cut">
 
@@ -163,12 +163,33 @@
                 android:layout_marginHorizontal="@dimen/_10sdp"
                 android:layout_marginTop="@dimen/_15sdp"
                 android:hint="price"
-                android:inputType="textEmailAddress"
+                android:inputType="number"
 
                 app:shapeAppearance="@style/Cut">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/price_et"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:textSize="@dimen/_12ssp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/buy_form_text_input_layout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:hint="Form URL"
+                android:inputType="text"
+
+                app:shapeAppearance="@style/Cut">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/buy_form_et"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="number"

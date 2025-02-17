@@ -55,6 +55,15 @@
     <string name="limited_access">وصول محدود</string>
     <string name="delete">مسح</string>
     <string name="no_internet_connection">لا يتوفر إتصال بالإنترنت</string>
+    <string name="no_browser_app_found">لا يوجد متصفح لديك</string>
+    <string name="no_email_app_found">لا يوجد تطبيق الإيميل</string>
+    <string name="no_thanks_continue">لا، شكراً! متابعة</string>
+    <string name="update_now">حدث الآن</string>
+    <string name="new_update_available">تحديث جديد متاح! قم بالترقية الآن للحصول على أفضل تجربة!</string>
+    <string name="update_available">تحديث جديد متاح</string>
+    <string name="no_thanks_close_the_app">لا، شكراً! اغلق التطبيق</string>
+    <string name="version__no_longer_supported">الإصدار الحالي من التطبيق لم يعد مدعوماً.</string>
+    <string name="logout">تسجيل الخروج</string>
 
     <array name="filter_spinner">
         <item>تم شراؤه</item>

@@ -56,6 +56,8 @@
     <string name="limited_access">Limited access</string>
     <string name="delete">delete</string>
     <string name="no_internet_connection">No internet connection</string>
+    <string name="no_browser_app_found">No browser app found</string>
+    <string name="no_email_app_found">No email app found</string>
 
     <array name="filter_spinner">
         <item>purchased</item>
@@ -92,6 +94,13 @@
         <item>Medicine</item>
     </array>
 
+    <string name="no_thanks_continue">No, Thanks! Continue</string>
+    <string name="update_now">Update now</string>
+    <string name="new_update_available">New Update Available! Upgrade Now for the Best Experience!</string>
+    <string name="update_available">New update is available</string>
+    <string name="no_thanks_close_the_app">No, Thanks! Close the app</string>
+    <string name="version__no_longer_supported">The current version of the application is no longer supported.</string>
+    <string name="logout">Logout</string>
 
 
 </resources>

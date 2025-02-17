@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:542489452607:android:4308f685cf1a2e38dfd88a",
+        "mobilesdk_app_id": "1:542489452607:android:074d4cc441e39c80dfd88a",
         "android_client_info": {
-          "package_name": "com.example.waraq"
+          "package_name": "com.dev3mk.awraqi"
         }
       },
       "oauth_client": [],

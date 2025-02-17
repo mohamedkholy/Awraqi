@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.waraq"
+    namespace = "com.dev3mk.awraqi"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.waraq"
+        applicationId = "com.dev3mk.awraqi"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

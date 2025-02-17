@@ -3,12 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/user_graph"
-    app:startDestination="@id/userHomeFragment"
+    app:startDestination="@id/splashFragment"
     >
 
     <fragment
         android:id="@+id/userHomeFragment"
-        android:name="com.example.waraq.ui.UserHomeFragment"
+        android:name="com.dev3mk.awraqi.ui.UserHomeFragment"
         android:label="UserHomeFragment">
         <action
             android:id="@+id/action_userHomeFragment_to_storeItemsDetailsFragment"
@@ -24,20 +24,20 @@
 
     <fragment
         android:id="@+id/pdfFragment"
-        android:name="com.example.waraq.ui.pdf.PdfFragment"
+        android:name="com.dev3mk.awraqi.ui.pdf.PdfFragment"
         android:label="PdfFragment" >
         <argument
             android:name="item"
-            app:argType="com.example.waraq.data.model.PaperItem" />
+            app:argType="com.dev3mk.awraqi.data.model.PaperItem" />
     </fragment>
 
     <fragment
         android:id="@+id/storeItemsDetailsFragment"
-        android:name="com.example.waraq.ui.itemPreview.ItemPreviewFragment"
+        android:name="com.dev3mk.awraqi.ui.itemPreview.ItemPreviewFragment"
         android:label="StoreItemsDetailsFragment" >
         <argument
             android:name="item"
-            app:argType="com.example.waraq.data.model.PaperItem" />
+            app:argType="com.dev3mk.awraqi.data.model.PaperItem" />
         <action
             android:id="@+id/action_storeItemsDetailsFragment_to_pdfFragment"
             app:destination="@id/pdfFragment" />
@@ -47,15 +47,18 @@
     </fragment>
     <fragment
         android:id="@+id/splashFragment"
-        android:name="com.example.waraq.ui.SplashFragment"
+        android:name="com.dev3mk.awraqi.ui.SplashFragment"
         android:label="SplashFragment" >
         <action
             android:id="@+id/action_splashFragment_to_userHomeFragment"
             app:destination="@id/userHomeFragment" />
+        <action
+            android:id="@+id/action_splashFragment_to_updateFragment"
+            app:destination="@id/updateFragment" />
     </fragment>
     <fragment
         android:id="@+id/loginSignupFragment"
-        android:name="com.example.waraq.ui.authentication.LoginSignupFragment"
+        android:name="com.dev3mk.awraqi.ui.authentication.AuthenticationFragment"
         android:label="LoginSignupFragment" >
         <action
             android:id="@+id/action_loginSignupFragment_to_forgetPasswordFragment"
@@ -66,7 +69,7 @@
     </fragment>
     <fragment
         android:id="@+id/settingFragment"
-        android:name="com.example.waraq.ui.settings.SettingFragment"
+        android:name="com.dev3mk.awraqi.ui.settings.SettingFragment"
         android:label="SettingFragment" >
         <action
             android:id="@+id/action_settingFragment_to_loginSignupFragment"
@@ -77,15 +80,15 @@
     </fragment>
     <fragment
         android:id="@+id/preferencesFragment"
-        android:name="com.example.waraq.ui.settings.PreferencesFragment"
+        android:name="com.dev3mk.awraqi.ui.settings.PreferencesFragment"
         android:label="PreferencesFragment" />
     <fragment
         android:id="@+id/forgetPasswordFragment"
-        android:name="com.example.waraq.ui.authentication.ForgetPasswordFragment"
+        android:name="com.dev3mk.awraqi.ui.authentication.ForgetPasswordFragment"
         android:label="ForgetPasswordFragment" />
     <fragment
         android:id="@+id/adminHomeFragment"
-        android:name="com.example.waraq.ui.admin.AdminHomeFragment"
+        android:name="com.dev3mk.awraqi.ui.admin.AdminHomeFragment"
         android:label="AdminHomeFragment" >
         <action
             android:id="@+id/action_adminHomeFragment_to_addItemFragment"
@@ -96,11 +99,22 @@
     </fragment>
     <fragment
         android:id="@+id/addItemFragment"
-        android:name="com.example.waraq.ui.admin.AddItemFragment"
+        android:name="com.dev3mk.awraqi.ui.admin.AddItemFragment"
         android:label="AddItemFragment" />
     <fragment
         android:id="@+id/assignItemFragment"
-        android:name="com.example.waraq.ui.admin.AssignItemFragment"
+        android:name="com.dev3mk.awraqi.ui.admin.AssignItemFragment"
         android:label="AssignItemFragment" />
+    <fragment
+        android:id="@+id/updateFragment"
+        android:name="com.dev3mk.awraqi.ui.UpdateFragment"
+        android:label="UpdateFragment" >
+        <action
+            android:id="@+id/action_updateFragment_to_userHomeFragment"
+            app:destination="@id/userHomeFragment" />
+        <argument
+            android:name="is_mandatory"
+            app:argType="boolean" />
+    </fragment>
 
 </navigation>

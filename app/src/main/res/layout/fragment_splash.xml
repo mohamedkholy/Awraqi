@@ -9,6 +9,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
+    android:background="@color/background"
     >
 
     <TextView
@@ -17,8 +18,9 @@
         android:text="@string/app_name"
         android:textStyle="bold"
         android:textSize="30sp"
+        android:drawableTint="@color/primary_color"
         android:drawableTop="@drawable/baseline_article"
-        android:textColor="@color/black"
+        android:textColor="@color/primary_color"
         android:textAllCaps="true"
         android:gravity="center"
         />
