@@ -1,0 +1,40 @@
+[33mcommit ba20f026f56bc7963b7c0433f5aea49b1403a7f5[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m
+Author: mohamed <mmm.medox@gmail.com>
+Date:   Fri Feb 21 10:35:18 2025 +0200
+
+    updating ignore files
+
+[1mdiff --git a/.gitignore b/.gitignore[m
+[1mindex aa724b7..7d5e4af 100644[m
+[1m--- a/.gitignore[m
+[1m+++ b/.gitignore[m
+[36m@@ -1,5 +1,6 @@[m
+ *.iml[m
+ .gradle[m
+[32m+[m[32m.idea[m
+ /local.properties[m
+ /.idea/caches[m
+ /.idea/libraries[m
+[36m@@ -9,7 +10,13 @@[m
+ /.idea/assetWizardSettings.xml[m
+ .DS_Store[m
+ /build[m
+[32m+[m[32m/release[m
+ /captures[m
+ .externalNativeBuild[m
+ .cxx[m
+ local.properties[m
+[32m+[m[32mgoogle-services.json[m
+[32m+[m[32mapp/google-services.json[m
+[32m+[m[32m*.apk[m
+[32m+[m[32m*.aab[m
+[32m+[m[32m*.ap_[m
+\ No newline at end of file[m
+[1mdiff --git a/app/.gitignore b/app/.gitignore[m
+[1mindex 42afabf..796b96d 100644[m
+[1m--- a/app/.gitignore[m
+[1m+++ b/app/.gitignore[m
+[36m@@ -1 +1 @@[m
+[31m-/build[m
+\ No newline at end of file[m
+[32m+[m[32m/build[m
