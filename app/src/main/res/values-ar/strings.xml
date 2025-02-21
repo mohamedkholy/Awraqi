@@ -64,6 +64,12 @@
     <string name="no_thanks_close_the_app">لا، شكراً! اغلق التطبيق</string>
     <string name="version__no_longer_supported">الإصدار الحالي من التطبيق لم يعد مدعوماً.</string>
     <string name="logout">تسجيل الخروج</string>
+    <string name="policy">سياستنا</string>
+    <string name="our_policy">
+تطبيقنا قد يستخدم خدمات طرف ثالث (مثل Google Analytics و Firebase) لجمع بيانات ذات صلة بتحسين تجربة المستخدم. هذه الخدمات لديها سياسات خصوصية خاصة بها.\n\n
+نحن لا نجمع أي معلومات شخصية أو بيانات من مستخدمي هذا التطبيق. لا يتم جمع أو تخزين أو مشاركة أي بيانات.\n\n
+إذا كان لديك أي أسئلة، يرجى التواصل معنا على awraqi.help@gmail.com
+</string>
 
     <array name="filter_spinner">
         <item>تم شراؤه</item>

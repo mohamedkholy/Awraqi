@@ -102,5 +102,8 @@
     <string name="version__no_longer_supported">The current version of the application is no longer supported.</string>
     <string name="logout">Logout</string>
 
+    <string name="policy">Policy</string>
+    <string name="our_policy">Our app may use third-party services (e.g., Google Analytics, Firebase) to collect data that is relevent to enhacing the user experience. These services have their own privacy policies.\n\nWe do not collect any personal information or data from users of this app. No data is collected, stored, or shared.\n\nIf you have any questions, please contact us at awraqi.help@gmail.com</string>
+
 
 </resources>

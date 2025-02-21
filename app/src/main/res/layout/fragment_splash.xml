@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -18,8 +19,8 @@
         android:text="@string/app_name"
         android:textStyle="bold"
         android:textSize="30sp"
-        android:drawableTint="@color/primary_color"
-        android:drawableTop="@drawable/baseline_article"
+        app:drawableTint="@color/primary_color"
+        app:drawableTopCompat="@drawable/baseline_article"
         android:textColor="@color/primary_color"
         android:textAllCaps="true"
         android:gravity="center"

@@ -14,16 +14,16 @@ android {
         applicationId = "com.dev3mk.awraqi"
         minSdk = 24
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 4
+        versionName = "1.3.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
-            isShrinkResources = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -95,7 +95,6 @@ dependencies {
     //pdfView
     implementation(libs.android.pdf.viewer)
 
-
     //glide
     implementation(libs.glide)
 
@@ -105,7 +104,10 @@ dependencies {
     //swiperefreshlayout
     implementation(libs.androidx.swiperefreshlayout)
 
-    implementation("net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:3.0.0-RC2")
+    //keyboardVisibilityEvent
+    implementation(libs.keyboardvisibilityevent)
 
+    //splashScreen
+    implementation(libs.androidx.core.splashscreen)
 
 }

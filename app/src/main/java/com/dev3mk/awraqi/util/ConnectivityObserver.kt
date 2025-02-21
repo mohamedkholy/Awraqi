@@ -3,6 +3,7 @@ package com.dev3mk.awraqi.util
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
+import android.net.NetworkCapabilities
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -14,8 +15,10 @@ class ConnectivityObserver(val context: Context) {
 
       val connectionObserver = callbackFlow {
         val callback = object : ConnectivityManager.NetworkCallback(){
+
             init {
-                launch { send(ConnectionStatus.Unavailable) }
+                if (!isCurrentlyConnected())
+                   launch {  send(ConnectionStatus.Unavailable) }
             }
 
             override fun onAvailable(network: Network) {
@@ -46,6 +49,13 @@ class ConnectivityObserver(val context: Context) {
         }
 
     }.distinctUntilChanged()
+
+    private fun isCurrentlyConnected(): Boolean {
+        return connectivityManager.activeNetwork?.let { network ->
+            connectivityManager.getNetworkCapabilities(network)
+                ?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+        } ?: false
+    }
 
 
     enum class ConnectionStatus {

@@ -18,6 +18,12 @@
         <item name="android:spinnerDropDownItemStyle">@style/mySpinnerItemStyle</item>
     </style>
 
+    <style name="splashScreen.Theme" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenIconBackgroundColor">@color/background</item>
+        <item name="postSplashScreenTheme">@style/Theme.Waraq</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/animated_logo</item>
+    </style>
+
     <style name="mySpinnerItemStyle" parent="@android:style/Widget.Holo.DropDownItem.Spinner">
         <item name="android:textSize">@dimen/_12sdp</item>
     </style>

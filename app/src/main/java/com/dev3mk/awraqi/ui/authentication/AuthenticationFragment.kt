@@ -10,7 +10,6 @@ import com.dev3mk.awraqi.Base.BaseFragment
 import com.dev3mk.awraqi.R
 import com.dev3mk.awraqi.util.Constants
 import com.dev3mk.awraqi.data.preferences.EmailPreferences
-import com.dev3mk.awraqi.data.preferences.UserTypePreferences
 import com.dev3mk.awraqi.databinding.FragmentAuthenticationBinding
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
@@ -155,7 +154,7 @@ class AuthenticationFragment :
         if (student.exists()) {
             println("exists")
             viewModel.saveFavoriteItems(email)
-            setUserTypeAndNavigateScreen(Constants.USER_TYPE, email)
+            setUserTypeAndNavigateScreen(email)
         }
 
     }
@@ -180,7 +179,7 @@ class AuthenticationFragment :
         firestore.collection(Constants.FIRE_STORE_USERS_COLLECTION)
             .document(email).set(map).addOnSuccessListener {
                 runBlocking {
-                    setUserTypeAndNavigateScreen(Constants.USER_TYPE, email)
+                    setUserTypeAndNavigateScreen(email)
                 }
             }.addOnFailureListener {
                 binding.isSigning = false
@@ -198,9 +197,8 @@ class AuthenticationFragment :
         return matcher.matches()
     }
 
-    private suspend fun setUserTypeAndNavigateScreen(userType: String, email: String) {
+    private suspend fun setUserTypeAndNavigateScreen(email: String) {
         EmailPreferences.saveEmail(requireContext(), email)
-        UserTypePreferences.saveUserType(requireContext(), userType)
         println(4)
         binding.isLogging = false
         binding.isSigning = false

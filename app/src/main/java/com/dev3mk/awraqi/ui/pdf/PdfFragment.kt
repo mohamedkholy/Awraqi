@@ -14,6 +14,7 @@ import android.view.MotionEvent
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.inputmethod.EditorInfo
+import android.widget.CheckBox
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.SeekBar
@@ -54,6 +55,8 @@ import kotlin.math.abs
 class PdfFragment : BaseFragment<FragmentPdfBinding>(R.layout.fragment_pdf) {
 
 
+    private lateinit var highlightLastStroke: RadioButton
+    private lateinit var drawLastStroke: RadioButton
     private val args: PdfFragmentArgs by navArgs()
     private lateinit var decryptedFile: File
     private lateinit var loadingPdfJob: Job
@@ -70,13 +73,15 @@ class PdfFragment : BaseFragment<FragmentPdfBinding>(R.layout.fragment_pdf) {
     private var newPathCount = 0
     private var paint = Paint().apply {
         color = Color.BLACK
-        strokeWidth = 5f
+        strokeWidth = 10f
         style = Paint.Style.STROKE
         isAntiAlias = true
     }
 
 
     override fun setup() {
+        highlightLastStroke = binding.thick50
+        drawLastStroke = binding.thick5
         itemId = item.id
 
         loadingPdfJob = CoroutineScope(Dispatchers.IO).launch {
@@ -137,7 +142,7 @@ class PdfFragment : BaseFragment<FragmentPdfBinding>(R.layout.fragment_pdf) {
         binding.colorsRadioGroup.setOnCheckedChangeListener { radioGroup: RadioGroup, id: Int ->
             paint.apply {
                 color = (radioGroup.findViewById<RadioButton>(id)).text.toString().toInt()
-                alpha = this@PdfFragment.alpha
+                alpha = if (binding.highlightButton.isChecked) this@PdfFragment.alpha else 255
             }
         }
 
@@ -177,10 +182,13 @@ class PdfFragment : BaseFragment<FragmentPdfBinding>(R.layout.fragment_pdf) {
         binding.drawButton.setOnCheckedChangeListener { _, isChecked: Boolean ->
             if (isChecked) {
                 paint.alpha = 255
+                drawLastStroke.isChecked = true
                 setChecked(binding.drawButton.id)
                 setIsDrawing(true)
 
-            } else { setIsDrawing(false) }
+            } else {
+                setIsDrawing(false)
+            }
         }
 
 
@@ -191,7 +199,7 @@ class PdfFragment : BaseFragment<FragmentPdfBinding>(R.layout.fragment_pdf) {
                 paint.alpha = alpha
                 setChecked(binding.highlightButton.id)
                 binding.brightnessButton.visibility = VISIBLE
-                binding.thick50.isChecked = true
+                highlightLastStroke.isChecked = true
                 setIsDrawing(true)
             } else {
                 binding.brightnessButton.visibility = GONE
@@ -213,7 +221,11 @@ class PdfFragment : BaseFragment<FragmentPdfBinding>(R.layout.fragment_pdf) {
         }
 
         binding.thicknessRadioGroup.setOnCheckedChangeListener { radioGroup: RadioGroup, id: Int ->
-            paint.strokeWidth = radioGroup.findViewById<RadioButton>(id).text.toString().toFloat()
+            val radioButton = radioGroup.findViewById<RadioButton>(id)
+            val strokeWidth = radioButton.text.toString().toFloat()
+            if (binding.drawButton.isChecked) drawLastStroke =
+                radioButton else highlightLastStroke = radioButton
+            paint.strokeWidth = strokeWidth
             binding.editThickness.isChecked = false
         }
 
@@ -226,7 +238,7 @@ class PdfFragment : BaseFragment<FragmentPdfBinding>(R.layout.fragment_pdf) {
         }
 
         binding.clearAllPages.setOnClickListener {
-            AlertDialog.Builder(requireContext(),R.style.MyDialogTheme).apply {
+            AlertDialog.Builder(requireContext(), R.style.MyDialogTheme).apply {
                 setTitle("Clear All Pages")
                 setMessage("All pages drawings Will be cleared press \"Clear All Pages\" to proceed.")
                 setPositiveButton(
@@ -269,22 +281,20 @@ class PdfFragment : BaseFragment<FragmentPdfBinding>(R.layout.fragment_pdf) {
     }
 
     private fun setIsDrawing(drawing: Boolean) {
-         if (drawing)
-         {
-             lifecycleScope.launch { calculateSubtractOffset() }
-             isDrawing = true
-             binding.isDrawing = true
-             binding.pageNumber.isFocusable = false
-             binding.pagesCount.isClickable = false
-         }
-        else
-        {   binding.pageNumber.isFocusableInTouchMode = true
+        if (drawing) {
+            lifecycleScope.launch { calculateSubtractOffset() }
+            isDrawing = true
+            binding.isDrawing = true
+            binding.pageNumber.isFocusable = false
+            binding.pagesCount.isClickable = false
+        } else {
+            binding.pageNumber.isFocusableInTouchMode = true
             binding.pagesCount.isClickable = true
-            if (!binding.highlightButton.isChecked && !binding.drawButton.isChecked){
-            isDrawing = false
-            binding.isDrawing = false
-            newPathCount = 0
-            binding.newPathCount = newPathCount
+            if (!binding.highlightButton.isChecked && !binding.drawButton.isChecked) {
+                isDrawing = false
+                binding.isDrawing = false
+                newPathCount = 0
+                binding.newPathCount = newPathCount
             }
         }
     }
@@ -344,7 +354,8 @@ class PdfFragment : BaseFragment<FragmentPdfBinding>(R.layout.fragment_pdf) {
         viewModel.notesLiveData.observe(viewLifecycleOwner) { notes ->
             notes?.notes?.let {
                 println("done")
-                notesMap = it  }
+                notesMap = it
+            }
         }
         viewModel.getAllNotes(itemId)
     }
@@ -420,7 +431,7 @@ class PdfFragment : BaseFragment<FragmentPdfBinding>(R.layout.fragment_pdf) {
         lifecycleScope.launch {
             var time = 10
             while (true) {
-                binding.timer.text = "00:%02d".format(Locale("en"),time)
+                binding.timer.text = "00:%02d".format(Locale("en"), time)
                 if (lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) time--
                 delay(1000)
                 if (time == 0) break
@@ -475,7 +486,6 @@ class PdfFragment : BaseFragment<FragmentPdfBinding>(R.layout.fragment_pdf) {
             subtractOffset = pagesOnScreen * pageSize.height
         }
     }
-
 
 
     @SuppressLint("ClickableViewAccessibility")

@@ -2,11 +2,9 @@ package com.dev3mk.awraqi.util
 
 object Constants {
     const val UPDATE_URL = "https://drive.google.com/drive/folders/1C3woZd8xRL4t3YVgT2ix-LQzcCoAisyN?usp=sharing"
-    const val CURRENT_VERSION = "1.0.0"
-    const val DATA_STORE_USER_TYPE = "DATA_STORE_USER_TYPE"
+    const val CURRENT_VERSION = "1.3.0"
     const val DATA_STORE_EMAIL= "DATA_STORE_EMAIL"
     const val DATA_STORE_NIGHT_MODE = "DATA_STORE_NIGHT_MODE"
-    const val USER_TYPE = "USER_TYPE"
     const val EMAIL_KEY = "EMAIL_KEY"
     const val FIRE_STORE_USERS_COLLECTION = "USERS"
     const val FIRE_STORE_ADMIN_COLLECTION = "ADMINS"
@@ -17,7 +15,7 @@ object Constants {
     const val DOWNLOAD_NOTIFICATION_CHANNEL_NAME = "DOWNLOAD_NOTIFICATION_CHANNEL_NAME"
     const val DOWNLOAD_FAILED = "DOWNLOAD_FAILED"
     const val DOWNLOAD_CANCELED = "DOWNLOAD_CANCELED"
-    const val SUPPORT_EMAIL = "mohamed.elkholy14920@gmail.com"
+    const val SUPPORT_EMAIL = "awraqi.help@gmail.com"
     const val DOWNLOAD_PROGRESS_KEY= "DOWNLOAD_PROGRESS_KEY"
     const val USER_FAVORITES_COLLECTION = "USER_FAVORITES_COLLECTION"
     const val FIRE_STORE_VERSION = "VERSION"

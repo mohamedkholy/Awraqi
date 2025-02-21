@@ -21,8 +21,8 @@ import java.net.URL
 
 
 class ItemsAdapter(
-    val ClickListener: OnItemClickListener,
-    val deleteListener: OnDeleteClickListener? = null,
+    private val clickListener: OnItemClickListener,
+    private val deleteListener: OnDeleteClickListener? = null,
 ) :
     RecyclerView.Adapter<ViewHolder>() {
 
@@ -104,7 +104,7 @@ class ItemsAdapter(
 
                 holder.textView.text = item.title
                 holder.view.setOnClickListener {
-                    ClickListener.onClick(item)
+                    clickListener.onClick(item)
                 }
             }
 

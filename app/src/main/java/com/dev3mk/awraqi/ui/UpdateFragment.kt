@@ -3,7 +3,6 @@ package com.dev3mk.awraqi.ui
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
-import android.view.View
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -24,7 +23,6 @@ class UpdateFragment : BaseFragment<FragmentUpdateBinding>(R.layout.fragment_upd
         {   binding.action.text= getString(R.string.no_thanks_close_the_app)
             binding.updateMessage.text = getString(R.string.version__no_longer_supported)
         }
-
     }
 
     override fun addCallbacks() {
@@ -33,7 +31,7 @@ class UpdateFragment : BaseFragment<FragmentUpdateBinding>(R.layout.fragment_upd
             exitProcess(0)}
             else
             {
-                findNavController().navigate(R.id.userHomeFragment)
+                findNavController().navigate(R.id.action_updateFragment_to_userHomeFragment)
             }
         }
 

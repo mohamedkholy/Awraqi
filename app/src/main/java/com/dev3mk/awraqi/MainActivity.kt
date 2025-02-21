@@ -1,67 +1,70 @@
 package com.dev3mk.awraqi
 
-import android.Manifest
 import android.content.Context
-import android.os.Build
 import android.os.Bundle
 import android.view.Window
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.app.ActivityCompat
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import com.dev3mk.awraqi.data.preferences.ThemePreference
 import com.dev3mk.awraqi.databinding.ActivityMainBinding
 import com.dev3mk.awraqi.data.preferences.LanguagePreference
+import com.dev3mk.awraqi.ui.splash.SplashViewModel
 import com.dev3mk.awraqi.util.LocaleHelper
+import com.dev3mk.awraqi.util.SecurityManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private val viewModel: SplashViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        lifecycleScope.launch { setNightMode() }
+        installSplashScreen().apply {
+            setKeepOnScreenCondition {
+                viewModel.splashScreenFlag.value!!
+            }
+        }
+
+        setNightMode()
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         setContentView(binding.root)
-        requestNotificationPermission()
         setSecureFlags(window)
         preventMonitoring()
     }
 
-    private fun requestNotificationPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
-                0
-            )
-        }
-    }
+
 
     private fun preventMonitoring() {
-        //        CoroutineScope(Dispatchers.Default).launch {
-//            while (true)
-//            {
-//                SecurityManager.preventScreenMonitoring(this@MainActivity)
-//                delay(3000)
-//            }
-//        }
+        CoroutineScope(Dispatchers.Default).launch {
+            while (true) {
+                SecurityManager.preventScreenMonitoring(applicationContext)
+                delay(3000)
+            }
+        }
     }
 
-    private suspend fun setNightMode() {
-        val isNightModeEnabled = ThemePreference.isNightModeEnabled(this)
-        if (isNightModeEnabled == null) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-        } else if (isNightModeEnabled) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        }
+    private fun setNightMode() {
+       lifecycleScope.launch {
+           val isNightModeEnabled = ThemePreference.isNightModeEnabled(this@MainActivity)
+           if (isNightModeEnabled == null) {
+               AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+           } else if (isNightModeEnabled) {
+               AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+           } else {
+               AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+           }
+       }
     }
 
     private fun setSecureFlags(window: Window) {
@@ -83,6 +86,7 @@ class MainActivity : AppCompatActivity() {
             )
         }
     }
+
 
 
 }

@@ -316,8 +316,8 @@
 
                 <ProgressBar
                     android:id="@+id/login_progress"
-                    android:layout_width="@dimen/_30ssp"
-                    android:layout_height="@dimen/_30ssp"
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="@dimen/_30sdp"
                     android:elevation="10dp"
                     android:indeterminateTint="@color/white"
                     android:visibility="@{uploading? View.VISIBLE : View.INVISIBLE}"

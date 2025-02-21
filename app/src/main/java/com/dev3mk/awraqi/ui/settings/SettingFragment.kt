@@ -50,6 +50,10 @@ class SettingFragment : BaseFragment<FragmentSettingBinding>(R.layout.fragment_s
             findNavController().navigate(R.id.preferencesFragment)
         }
 
+        binding.policy.setOnClickListener {
+            findNavController().navigate(R.id.policyFragment)
+        }
+
         binding.helpSupport.setOnClickListener {
             sendSupportEmail()
         }
@@ -62,7 +66,7 @@ class SettingFragment : BaseFragment<FragmentSettingBinding>(R.layout.fragment_s
 
     private fun signOut() {
         Firebase.auth.signOut()
-        binding.signIn.setCompoundDrawablesWithIntrinsicBounds(
+        binding.signIn.setCompoundDrawablesRelativeWithIntrinsicBounds(
             R.drawable.baseline_account_circle_24,
             0,
             R.drawable.baseline_arrow_forward_ios,

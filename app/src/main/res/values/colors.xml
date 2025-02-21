@@ -33,4 +33,7 @@
     <color name="quantum_grey_600">#757575</color>
     <color name="off_white">#F0EEEE</color>
     <color name="red">#CC0000</color>
+    <color name="splash_logo_color">#376FCC</color>
+    <color name="gray_text">#757575</color>
+    <color name="update_cover_color">#376FCC</color>
 </resources>

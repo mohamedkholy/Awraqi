@@ -1,12 +1,15 @@
 package com.dev3mk.awraqi.ui
 
 
+import android.Manifest
+import android.os.Build
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.widget.SearchView
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
@@ -41,6 +44,7 @@ class UserHomeFragment : BaseFragment<FragmentUserHomeBinding>(R.layout.fragment
         binding.bottomNavigation.setupWithNavController(navController)
         binding.toolbar.inflateMenu(R.menu.user_home_menu)
         prepareSearchView()
+        requestNotificationPermission()
     }
 
     private fun prepareSearchView() {
@@ -54,6 +58,16 @@ class UserHomeFragment : BaseFragment<FragmentUserHomeBinding>(R.layout.fragment
         val adapter = ArrayAdapter(requireContext(), R.layout.spinner_item, stringArray)
         adapter.setDropDownViewResource(R.layout.drop_down_spinner_item)
         binding.spinner.adapter = adapter
+    }
+
+    private fun requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                0
+            )
+        }
     }
 
     override fun addCallbacks() {

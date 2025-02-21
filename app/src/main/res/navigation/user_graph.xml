@@ -12,7 +12,7 @@
         android:label="UserHomeFragment">
         <action
             android:id="@+id/action_userHomeFragment_to_storeItemsDetailsFragment"
-            app:destination="@id/storeItemsDetailsFragment"
+            app:destination="@id/storeItemPreviewFragment"
             app:enterAnim="@anim/slide_in"
             app:exitAnim="@anim/fade_out"
             app:popEnterAnim="@anim/fade_in"
@@ -32,7 +32,7 @@
     </fragment>
 
     <fragment
-        android:id="@+id/storeItemsDetailsFragment"
+        android:id="@+id/storeItemPreviewFragment"
         android:name="com.dev3mk.awraqi.ui.itemPreview.ItemPreviewFragment"
         android:label="StoreItemsDetailsFragment" >
         <argument
@@ -47,14 +47,20 @@
     </fragment>
     <fragment
         android:id="@+id/splashFragment"
-        android:name="com.dev3mk.awraqi.ui.SplashFragment"
+        android:name="com.dev3mk.awraqi.ui.splash.SplashFragment"
         android:label="SplashFragment" >
         <action
             android:id="@+id/action_splashFragment_to_userHomeFragment"
-            app:destination="@id/userHomeFragment" />
+            app:destination="@id/userHomeFragment"
+            app:popUpTo="@id/splashFragment"
+            app:popUpToInclusive="true"
+            />
         <action
             android:id="@+id/action_splashFragment_to_updateFragment"
-            app:destination="@id/updateFragment" />
+            app:destination="@id/updateFragment"
+            app:popUpTo="@id/splashFragment"
+            app:popUpToInclusive="true"
+            />
     </fragment>
     <fragment
         android:id="@+id/loginSignupFragment"
@@ -77,6 +83,9 @@
         <action
             android:id="@+id/action_settingFragment_to_preferencesFragment"
             app:destination="@id/preferencesFragment" />
+        <action
+            android:id="@+id/action_settingFragment_to_policyFragment"
+            app:destination="@id/policyFragment" />
     </fragment>
     <fragment
         android:id="@+id/preferencesFragment"
@@ -111,10 +120,18 @@
         android:label="UpdateFragment" >
         <action
             android:id="@+id/action_updateFragment_to_userHomeFragment"
-            app:destination="@id/userHomeFragment" />
+            app:destination="@id/userHomeFragment"
+            app:popUpTo="@id/updateFragment"
+            app:popUpToInclusive="true"
+            />
         <argument
             android:name="is_mandatory"
             app:argType="boolean" />
     </fragment>
+    <fragment
+        android:id="@+id/policyFragment"
+        android:name="com.dev3mk.awraqi.ui.PolicyFragment"
+        android:label="fragment_policy"
+        tools:layout="@layout/fragment_policy" />
 
 </navigation>
