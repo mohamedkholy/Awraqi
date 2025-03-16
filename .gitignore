@@ -1,6 +1,10 @@
 *.iml
 .gradle
 .idea
+.navigation
+captures/
+obj/
+output.json
 /local.properties
 /.idea/caches
 /.idea/libraries
@@ -9,7 +13,7 @@
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
 .DS_Store
-/build
+build/
 /release
 /captures
 .externalNativeBuild
@@ -19,3 +23,8 @@ google-services.json
 app/google-services.json
 *.apk
 *.aab
+*.dex
+*.class
+bin/
+gen/
+Thumbs.db

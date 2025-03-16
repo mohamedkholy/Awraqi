@@ -192,7 +192,7 @@
                     android:id="@+id/buy_form_et"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="number"
+                    android:inputType="text"
                     android:textSize="@dimen/_12ssp" />
 
             </com.google.android.material.textfield.TextInputLayout>

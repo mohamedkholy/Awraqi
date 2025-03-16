@@ -43,8 +43,6 @@ class MainActivity : AppCompatActivity() {
         preventMonitoring()
     }
 
-
-
     private fun preventMonitoring() {
         CoroutineScope(Dispatchers.Default).launch {
             while (true) {

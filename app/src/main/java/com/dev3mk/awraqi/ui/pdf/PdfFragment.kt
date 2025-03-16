@@ -480,10 +480,14 @@ class PdfFragment : BaseFragment<FragmentPdfBinding>(R.layout.fragment_pdf) {
         binding.pdfView.resetZoomWithAnimation()
         delay(500)
         binding.pdfView.apply {
-            val pageSize = getPageSize(currentPage)
-            val scrolledPages = abs(currentYOffset) / pageSize.height
-            val pagesOnScreen = currentPage - scrolledPages
-            subtractOffset = pagesOnScreen * pageSize.height
+            var totalHeightAboveCurrent = 0f
+
+            for (i in 0 until currentPage) {
+                totalHeightAboveCurrent += getPageSize(i).height
+            }
+
+            subtractOffset = totalHeightAboveCurrent-abs(currentYOffset)
+            println(subtractOffset)
         }
     }
 
