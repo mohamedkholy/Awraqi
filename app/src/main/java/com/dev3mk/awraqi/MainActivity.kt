@@ -15,6 +15,7 @@ import com.dev3mk.awraqi.data.preferences.LanguagePreference
 import com.dev3mk.awraqi.ui.splash.SplashViewModel
 import com.dev3mk.awraqi.util.LocaleHelper
 import com.dev3mk.awraqi.util.SecurityManager
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -40,7 +41,7 @@ class MainActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         setContentView(binding.root)
         setSecureFlags(window)
-        preventMonitoring()
+//        preventMonitoring()
     }
 
     private fun preventMonitoring() {

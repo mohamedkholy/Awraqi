@@ -25,11 +25,6 @@ class MessagingService : FirebaseMessagingService() {
         val title = message.notification?.title.toString()
         val body = message.notification?.body.toString()
         val link = message.data["link"].toString()
-        println("link: $link")
-        Log.d(
-            "ggg",
-            "notification_title: $title    notification_message: $body   link: $link"
-        )
         if (title != "null" && body != "null")
             sendNotification(title, body, link)
 

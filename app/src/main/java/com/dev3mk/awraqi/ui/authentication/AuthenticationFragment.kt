@@ -25,7 +25,7 @@ import java.util.regex.Pattern
 class AuthenticationFragment :
     BaseFragment<FragmentAuthenticationBinding>(R.layout.fragment_authentication) {
 
-        private val viewModel by viewModel<AuthenticationViewModel>()
+    private val viewModel by viewModel<AuthenticationViewModel>()
 
     companion object {
         private const val PASSWORD_PATTERN =
@@ -103,60 +103,61 @@ class AuthenticationFragment :
     private fun signUp() {
         val password = binding.passwordEt.text.toString()
         val email = binding.emailEt.text.toString()
-
         if (validateEmailAndPassword(email, password)) {
             binding.isSigning = true
-            firebaseAuth.createUserWithEmailAndPassword(email, password)
-                .addOnSuccessListener {
+            lifecycleScope.launch {
+                try {
+                    firebaseAuth.createUserWithEmailAndPassword(email, password).await()
+
                     onSignupSuccess(email)
-                }.addOnFailureListener {
+                } catch (e: Exception) {
+                    e.printStackTrace()
                     binding.isSigning = false
-                    Snackbar.make(binding.root, "Signup failed", Snackbar.LENGTH_LONG).show()
+                    Snackbar.make(binding.root, "Signup failed: ${e.message}", Snackbar.LENGTH_LONG).show()
                 }
-
+            }
         }
-
     }
 
     private suspend fun login() {
         val password = binding.passwordEt.text.toString()
         val email = binding.emailEt.text.toString()
+
         if (validateEmailAndPassword(email, password)) {
             binding.isLogging = true
-            val admin =
-                firestore.collection(Constants.FIRE_STORE_ADMIN_COLLECTION).document(email).get()
-                    .await()
-            if (admin.exists()) {
-                findNavController().navigate(R.id.adminHomeFragment)
+            try {
+                val admin =
+                    firestore.collection(Constants.FIRE_STORE_ADMIN_COLLECTION).document(email)
+                        .get().await()
+                if (admin.exists()) {
+                    binding.isLogging = false
+                    findNavController().navigate(R.id.adminHomeFragment)
+                } else {
+                    firebaseAuth.signInWithEmailAndPassword(email, password).await()
+                    binding.isLogging = false
+                    onLoginSuccess(email)
+                }
+            } catch (e: Exception) {
                 binding.isLogging = false
-            } else {
-                println("log")
-                firebaseAuth.signInWithEmailAndPassword(email, password)
-                    .addOnSuccessListener {
-                        lifecycleScope.launch {
-                            onLoginSuccess(email)
-                        }
-                    }.addOnFailureListener {
-                        binding.isLogging = false
-                        Snackbar.make(binding.root, "Login failed", Snackbar.LENGTH_LONG).show()
-                    }
-
+                Snackbar.make(binding.root, "Login failed: ${e.message}", Snackbar.LENGTH_LONG)
+                    .show()
             }
         }
-
     }
 
     private suspend fun onLoginSuccess(email: String) {
-        val student =
-            firestore.collection(Constants.FIRE_STORE_USERS_COLLECTION).document(email).get()
+        try {
+            val student = firestore.collection(Constants.FIRE_STORE_USERS_COLLECTION)
+                .document(email)
+                .get()
                 .await()
-        println(student)
-        if (student.exists()) {
-            println("exists")
-            viewModel.saveFavoriteItems(email)
-            setUserTypeAndNavigateScreen(email)
+            if (student.exists()) {
+                viewModel.saveFavoriteItems(email)
+                setUserTypeAndNavigateScreen(email)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
-
     }
 
 
@@ -174,32 +175,30 @@ class AuthenticationFragment :
         return validEmail && validPassword
     }
 
-    private fun onSignupSuccess(email: String) {
-        val map = mapOf("email" to email)
-        firestore.collection(Constants.FIRE_STORE_USERS_COLLECTION)
-            .document(email).set(map).addOnSuccessListener {
-                runBlocking {
-                    setUserTypeAndNavigateScreen(email)
-                }
-            }.addOnFailureListener {
-                binding.isSigning = false
-            }
 
+    private suspend fun onSignupSuccess(email: String) {
+        val map = mapOf("email" to email)
+        try {
+            firestore.collection(Constants.FIRE_STORE_USERS_COLLECTION)
+                .document(email)
+                .set(map)
+                .await()
+            setUserTypeAndNavigateScreen(email)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            binding.isSigning = false
+        }
     }
 
 
     private fun isValidPassword(password: String): Boolean {
-
-
         val pattern = Pattern.compile(PASSWORD_PATTERN)
         val matcher = pattern.matcher(password)
-
         return matcher.matches()
     }
 
     private suspend fun setUserTypeAndNavigateScreen(email: String) {
         EmailPreferences.saveEmail(requireContext(), email)
-        println(4)
         binding.isLogging = false
         binding.isSigning = false
         findNavController().popBackStack()

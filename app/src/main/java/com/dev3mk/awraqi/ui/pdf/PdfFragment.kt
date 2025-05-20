@@ -353,7 +353,6 @@ class PdfFragment : BaseFragment<FragmentPdfBinding>(R.layout.fragment_pdf) {
     private fun getNotes() {
         viewModel.notesLiveData.observe(viewLifecycleOwner) { notes ->
             notes?.notes?.let {
-                println("done")
                 notesMap = it
             }
         }
@@ -487,7 +486,6 @@ class PdfFragment : BaseFragment<FragmentPdfBinding>(R.layout.fragment_pdf) {
             }
 
             subtractOffset = totalHeightAboveCurrent-abs(currentYOffset)
-            println(subtractOffset)
         }
     }
 

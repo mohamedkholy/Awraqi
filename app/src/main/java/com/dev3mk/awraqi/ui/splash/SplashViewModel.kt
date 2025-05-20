@@ -24,15 +24,21 @@ class SplashViewModel(private val context: Context) : ViewModel() {
 
 
     suspend fun getLatestVersion() {
-        val result = Firebase.firestore.collection(Constants.FIRE_STORE_VERSION)
-            .document(Constants.FIRE_STORE_VERSION).get().await()
-        val version = result.toObject(Version::class.java)!!
-        if (version.mandatory)
-        {
-            MandatoryUpdatePreferences.saveVersionStatus(context, version)
+        try {
+            val result = Firebase.firestore.collection(Constants.FIRE_STORE_VERSION)
+                .document(Constants.FIRE_STORE_VERSION)
+                .get()
+                .await()
+            val version = result.toObject(Version::class.java)!!
+            if (version.mandatory) {
+                MandatoryUpdatePreferences.saveVersionStatus(context, version)
+            }
+            _updateStates.postValue(version)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
+            finishSplash()
         }
-        _updateStates.postValue(version)
-        finishSplash()
     }
 
     fun finishSplash() {

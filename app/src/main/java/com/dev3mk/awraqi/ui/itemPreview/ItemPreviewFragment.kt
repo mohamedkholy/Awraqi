@@ -106,7 +106,6 @@ class ItemPreviewFragment :
     private fun registerDownloadProgressReceiver() {
         receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, p1: Intent?) {
-                println("receive")
                 val bundle = p1?.extras
                 val progress = bundle?.getInt(Constants.DOWNLOAD_PROGRESS_KEY)
                 if (progress != null && context != null && item.downloadState == DownloadState.downloading) {

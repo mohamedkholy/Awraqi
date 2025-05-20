@@ -22,9 +22,15 @@ class RemoteDataSource(val context: Context) {
 
     suspend fun getAllStoreItems(): List<PaperItem> {
         var paperItemList: List<PaperItem> = listOf(PaperItem())
+        try {
             val userItemIdList = getUserBooksIds()
-            val task = firestoreDatabase.collection(Constants.FIRE_STORE_BOOKS_COLLECTION)
-                .get().await()
+            val task = try {
+                firestoreDatabase.collection(Constants.FIRE_STORE_BOOKS_COLLECTION)
+                    .get().await()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                null
+            }
             if (task != null) {
                 paperItemList = task.toObjects(PaperItem::class.java)
             }
@@ -34,26 +40,32 @@ class RemoteDataSource(val context: Context) {
                         item.isPurchased = true
                 }
             }
-            return paperItemList
-
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return paperItemList
     }
 
     fun downloadItem(item: PaperItem) {
-            val intent = Intent(context, DownloadItemService::class.java)
-            intent.setAction(DownloadItemService.Actions.START.toString())
-            intent.putExtra(Constants.SERVICE_INTENT_NAME, item)
-            context.startService(intent)
+        val intent = Intent(context, DownloadItemService::class.java)
+        intent.setAction(DownloadItemService.Actions.START.toString())
+        intent.putExtra(Constants.SERVICE_INTENT_NAME, item)
+        context.startService(intent)
     }
 
 
-     suspend fun addToFireStore(id: String) {
+    suspend fun addToFireStore(id: String) {
         val userEmail = EmailPreferences.getEmail(context)
         userEmail?.apply {
-            firestoreDatabase.collection(Constants.FIRE_STORE_USERS_COLLECTION).document(userEmail)
-                .collection(Constants.USER_FAVORITES_COLLECTION).document(id)
-                .set(ItemId(id))
+            try {
+                firestoreDatabase.collection(Constants.FIRE_STORE_USERS_COLLECTION)
+                    .document(userEmail)
+                    .collection(Constants.USER_FAVORITES_COLLECTION).document(id)
+                    .set(ItemId(id)).await()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
-
     }
 
     suspend fun getUserBooksIds(): List<String> {
@@ -61,23 +73,30 @@ class RemoteDataSource(val context: Context) {
         var booksIdsList = mutableListOf<ItemId>()
         if (userEmail == null)
             return mutableListOf()
-        val bookIds =
-            firestoreDatabase.collection(Constants.FIRE_STORE_USERS_COLLECTION).document(userEmail)
+        try {
+            val bookIds = firestoreDatabase.collection(Constants.FIRE_STORE_USERS_COLLECTION)
+                .document(userEmail)
                 .collection(Constants.FIRE_STORE_USER_BOOKS_COLLECTION).get().await()
-        if (!bookIds.isEmpty) {
-            booksIdsList = bookIds.toObjects(ItemId::class.java)
+            if (!bookIds.isEmpty) {
+                booksIdsList = bookIds.toObjects(ItemId::class.java)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
         return booksIdsList.map { it.id }
     }
 
 
     suspend fun removeFavoriteItem(id: String) {
-
         val userEmail = EmailPreferences.getEmail(context)
         userEmail?.apply {
-            firestoreDatabase.collection(Constants.FIRE_STORE_USERS_COLLECTION).document(userEmail)
-                .collection(Constants.USER_FAVORITES_COLLECTION).document(id).delete()
-
+            try {
+                firestoreDatabase.collection(Constants.FIRE_STORE_USERS_COLLECTION)
+                    .document(userEmail)
+                    .collection(Constants.USER_FAVORITES_COLLECTION).document(id).delete().await()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
@@ -89,22 +108,26 @@ class RemoteDataSource(val context: Context) {
     }
 
 
-    suspend fun getFavoriteItems(email: String):List<ItemId> {
+    suspend fun getFavoriteItems(email: String): List<ItemId> {
         return withContext(Dispatchers.IO) {
-            println("before")
-            val result =
-                firestoreDatabase.collection(Constants.FIRE_STORE_USERS_COLLECTION).document(email)
+            try {
+                println("before")
+                val result = firestoreDatabase.collection(Constants.FIRE_STORE_USERS_COLLECTION)
+                    .document(email)
                     .collection(Constants.USER_FAVORITES_COLLECTION).get().await()
-            println(result)
-            if (result != null) {
-                val favoriteIds = result.toObjects(ItemId::class.java)
-                return@withContext favoriteIds
-            } else {
+                println(result)
+                if (result != null) {
+                    val favoriteIds = result.toObjects(ItemId::class.java)
+                    return@withContext favoriteIds
+                } else {
+                    return@withContext emptyList()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
                 return@withContext emptyList()
             }
         }
     }
-
 
 
 }

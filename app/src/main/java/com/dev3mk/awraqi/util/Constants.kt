@@ -1,8 +1,10 @@
 package com.dev3mk.awraqi.util
 
 object Constants {
+    const val NOTIFICATION_CHANNEL_ID = "NOTIFICATION_CHANNEL_ID"
+    const val NOTIFICATION_CHANNEL_NAME = "NOTIFICATION_CHANNEL_NAME"
     const val UPDATE_URL = "https://play.google.com/store/apps/details?id=com.dev3mk.awraqi"
-    const val CURRENT_VERSION = "1.3.1"
+    const val CURRENT_VERSION = "1.3.3"
     const val DATA_STORE_EMAIL= "DATA_STORE_EMAIL"
     const val DATA_STORE_NIGHT_MODE = "DATA_STORE_NIGHT_MODE"
     const val EMAIL_KEY = "EMAIL_KEY"

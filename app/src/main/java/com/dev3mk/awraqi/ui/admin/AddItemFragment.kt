@@ -110,7 +110,6 @@ class AddItemFragment : BaseFragment<FragmentAddItemBinding>(R.layout.fragment_a
                     pdfStorageReference.putFile(pdfUri!!).addOnCompleteListener {
                         if (it.isSuccessful) {
                             pdfStorageReference.downloadUrl.addOnSuccessListener { url ->
-                                println("......................pdf Url:  $url")
                                 addCoverToStorage(url.toString())
                             }
                                 .addOnFailureListener {
@@ -133,7 +132,6 @@ class AddItemFragment : BaseFragment<FragmentAddItemBinding>(R.layout.fragment_a
         coverStorageReference.putFile(coverUri!!).addOnCompleteListener {
             if (it.isSuccessful) {
                 coverStorageReference.downloadUrl.addOnSuccessListener { coverUrl ->
-                    println("......................cover Url:  $coverUrl")
                     addItemToFireStore(pdfUrl, coverUrl.toString())
                 }
 

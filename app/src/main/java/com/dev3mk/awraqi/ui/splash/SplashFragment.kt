@@ -22,34 +22,28 @@ class SplashFragment :
     private val viewModel: SplashViewModel by activityViewModel()
 
     override fun setup() {
+        viewModel.updateStates.observe(viewLifecycleOwner) { version ->
+            if (version.version != Constants.CURRENT_VERSION) {
+                navigate(
+                    SplashFragmentDirections.actionSplashFragmentToUpdateFragment(
+                        checkIfMandatory()
+                    )
+                )
+            } else {
+                navigate(SplashFragmentDirections.actionSplashFragmentToUserHomeFragment())
+            }
+        }
+
         lifecycleScope.launch {
             val connectivityObserver = ConnectivityObserver(requireContext()).connectionObserver
             val status = connectivityObserver.first()
             if (status == ConnectivityObserver.ConnectionStatus.Available) {
                 viewModel.getLatestVersion()
-                viewModel.updateStates.observe(viewLifecycleOwner) { version ->
-                    if (version.version != Constants.CURRENT_VERSION) {
-                        navigate(
-                            SplashFragmentDirections.actionSplashFragmentToUpdateFragment(
-                                checkIfMandatory()
-                            )
-                        )
-                    } else {
-                        navigate(SplashFragmentDirections.actionSplashFragmentToUserHomeFragment())
-                    }
-                }
             } else {
-                if (checkIfMandatory())
-                {
-                    navigate(
-                        SplashFragmentDirections.actionSplashFragmentToUpdateFragment(
-                            true
-                        )
-                    )
-                }
-                else {
+                if (checkIfMandatory()) {
+                    navigate(SplashFragmentDirections.actionSplashFragmentToUpdateFragment(true))
+                } else {
                     navigate(SplashFragmentDirections.actionSplashFragmentToUserHomeFragment())
-
                 }
                 viewModel.finishSplash()
             }

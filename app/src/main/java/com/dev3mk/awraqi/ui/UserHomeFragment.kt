@@ -22,6 +22,7 @@ import com.dev3mk.awraqi.data.preferences.LanguagePreference
 import com.dev3mk.awraqi.ui.homeItems.ItemsViewModel
 import kotlinx.coroutines.runBlocking
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
+import java.util.Locale
 
 
 class UserHomeFragment : BaseFragment<FragmentUserHomeBinding>(R.layout.fragment_user_home) {
@@ -83,7 +84,7 @@ class UserHomeFragment : BaseFragment<FragmentUserHomeBinding>(R.layout.fragment
                         view?.apply {
                             var filter = (this as TextView).text.toString()
                             runBlocking {
-                                if (LanguagePreference.getLanguage(requireContext()) == "ar") {
+                                if (Locale.getDefault().language == "ar") {
                                     filter = translations[filter]!!
                                 }
                             }
