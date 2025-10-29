@@ -10,19 +10,37 @@ plugins {
 android {
     namespace = "com.dev3mk.awraqi"
     compileSdk = 36
+    ndkVersion = "29.0.14206865"
 
     defaultConfig {
         applicationId = "com.dev3mk.awraqi"
         minSdk = 24
         targetSdk = 36
-        versionCode = 7
-        versionName = "1.3.4"
+        versionCode = 9
+        versionName = "1.4.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        getByName("debug") {
+            storeFile = file("C:\\Users\\mmmme\\Downloads\\awraqiKey.jks")
+            storePassword = "12345678"
+            keyAlias = "awraqikey"
+            keyPassword = "12345678"
+        }
+        create("release") {
+            storeFile = file("C:/Users/mmmme/Downloads/awraqiKey.jks") // adjust path if needed
+            storePassword = "12345678"
+            keyAlias = "awraqikey"
+            keyPassword = "12345678"
+            storeType = "PKCS12" // IMPORTANT
+        }
+    }
+
     buildTypes {
         release {
+            signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
