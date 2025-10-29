@@ -18,5 +18,4 @@ val viewModelModule = module {
     viewModelOf(::AuthenticationViewModel)
 
     viewModelOf(::SplashViewModel)
-
 }
