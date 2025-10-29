@@ -16,8 +16,8 @@ android {
         applicationId = "com.dev3mk.awraqi"
         minSdk = 24
         targetSdk = 36
-        versionCode = 9
-        versionName = "1.4.4"
+        versionCode = 10
+        versionName = "1.4.5"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -105,6 +105,7 @@ dependencies {
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.storage)
     implementation (libs.firebase.messaging.ktx)
+
 
     //Dimen
     implementation(libs.ssp.android)
